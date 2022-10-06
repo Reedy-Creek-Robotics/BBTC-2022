@@ -111,24 +111,22 @@ public class ServoCode extends LinearOpMode {
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
 
-            if (gamepad1.x) {
+            if (gamepad1.x && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
                 left_servo.setPosition(left_close);
-                sleep(CYCLE_MS);
-                idle();
-
                 right_servo.setPosition(right_close);
                 sleep(CYCLE_MS);
                 idle();
+                telemetry.addData(">", "X is pressed");
+                telemetry.update();
             }
 
-            if (gamepad1.y) {
+            if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
                 left_servo.setPosition(left_open);
-                sleep(CYCLE_MS);
-                idle();
-
                 right_servo.setPosition(right_open);
                 sleep(CYCLE_MS);
                 idle();
+                telemetry.addData(">", "Y is pressed");
+                telemetry.update();
             }
         }
 
