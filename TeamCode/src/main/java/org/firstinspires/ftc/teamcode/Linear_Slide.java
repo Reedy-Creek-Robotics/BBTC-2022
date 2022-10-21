@@ -71,27 +71,11 @@ public class Linear_Slide extends LinearOpMode {
         int BUTTON_DELAY = 250;
         ElapsedTime timeSinceLastPress = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         // Scan servo till stop pressed.
-        while(opModeIsActive()){
+        while(opModeIsActive()) {
+            double y = gamepad1.left_stick_y;
+            motor.setPower(y / 2);
 
-            if (gamepad1.a && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-                timeSinceLastPress.reset();
-                motor.setPower(power);
-            }
-
-            if (gamepad1.b && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
-                timeSinceLastPress.reset();
-                motor.setPower(0);
-            }
-
-            if (gamepad1.dpad_up){
-                power = power + INCREMENT;
-            }
-
-            if (gamepad1.dpad_up){
-                power = power - INCREMENT;
-            }
-
-            telemetry.addData("Motor Power", power);
+            telemetry.addData("Motor Power", y);
             telemetry.update();
         }
 
