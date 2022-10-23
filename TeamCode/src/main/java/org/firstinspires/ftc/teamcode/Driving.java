@@ -37,11 +37,11 @@ public class Driving extends LinearOpMode {
         ElapsedTime timeSinceLastPress = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
         while(opModeIsActive()){
-            double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
+            double y = Math.pow(-gamepad1.left_stick_y, 3);
+            double x = Math.pow(gamepad1.left_stick_x, 3);
+            double rx = Math.pow(gamepad1.right_stick_x, 3);
             //double botHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-            double botHeading = imu.getAngularOrientation().firstAngle;
+            double botHeading = -imu.getAngularOrientation().firstAngle;
             double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
             double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
