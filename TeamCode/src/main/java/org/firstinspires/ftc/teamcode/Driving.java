@@ -66,8 +66,8 @@ public class Driving extends LinearOpMode {
             //frontRight.setPower(y - x - rx);
             //backRight.setPower(y + x - rx);
             //double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (rotY + rotX + rx);
-            double backLeftPower = (rotY - rotX + rx);
+            double frontLeftPower = (rotY - rotX + rx);
+            double backLeftPower = (rotY + rotX + rx);
             double frontRightPower = (rotY - rotX - rx);
             double backRightPower = (rotY + rotX - rx);
 
