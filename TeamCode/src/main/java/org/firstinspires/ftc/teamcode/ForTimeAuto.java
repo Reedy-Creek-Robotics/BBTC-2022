@@ -14,17 +14,20 @@ public class ForTimeAuto extends LinearOpMode{
         DcMotor backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        double powerFactor = 0.6;
+        double powerFactor = 0.3;
 
         waitForStart();
         ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        frontLeft.setPower(0.6);
-        backLeft.setPower(0.6);
-        frontRight.setPower(0.6);
-        backRight.setPower(0.6);
-        while(elapsedTime.seconds()>5){
+        frontLeft.setPower(powerFactor);
+        backLeft.setPower(powerFactor);
+        frontRight.setPower(powerFactor);
+        backRight.setPower(powerFactor);
+        while(elapsedTime.seconds()<3){
             //"Absolutely Nothing"
         }
-
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
     }
 }
