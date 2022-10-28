@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
+/**ftc sim
  * This OpMode scans a single servo back and forward until Stop is pressed.
  * The code is structured as a LinearOpMode
  * INCREMENT sets how much to increase/decrease the servo position each cycle
