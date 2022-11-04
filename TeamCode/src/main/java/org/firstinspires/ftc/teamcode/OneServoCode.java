@@ -58,8 +58,8 @@ public class OneServoCode extends LinearOpMode {
 
     // Define class members
     Servo   left_servo;
-    double  left_close = 0.25; // Start at halfway position
-    double  left_open = 0;
+    double  x_pos = 0.25; // Start at halfway position
+    double  y_pos = 0;
 
     @Override
     public void runOpMode() {
@@ -79,36 +79,35 @@ public class OneServoCode extends LinearOpMode {
         while(opModeIsActive()){
 
             if (gamepad1.dpad_up && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-                left_close = left_close + 0.025;
+                x_pos = x_pos + 0.025;
                 timeSinceLastPress.reset();
             }
 
             if (gamepad1.dpad_down && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-                left_close = left_close - 0.025;
+                x_pos = x_pos - 0.025;
                 timeSinceLastPress.reset();
             }
 
-            // Display the current value
-            telemetry.addData("Left Servo Position", "%5.2f", left_close);
-            telemetry.addData("Left Servo Position", "%5.2f", left_open);
-            telemetry.addData(">", "Press Stop to end test." );
-            telemetry.update();
-
             if (gamepad1.x && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-                left_servo.setPosition(left_close);
+                left_servo.setPosition(x_pos);
                 sleep(CYCLE_MS);
                 idle();
                 telemetry.addData(">", "X is pressed");
-                telemetry.update();
             }
 
             if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-                left_servo.setPosition(left_open);
+                left_servo.setPosition(y_pos);
                 sleep(CYCLE_MS);
                 idle();
                 telemetry.addData(">", "Y is pressed");
-                telemetry.update();
             }
+
+            // Display the current value
+            telemetry.addData("X Position", "%5.2f", x_pos);
+            telemetry.addData("Y Position", "%5.2f", y_pos);
+            telemetry.addData("Actual Servo Position is", "%5.2f", left_servo.getPosition());
+            telemetry.addData(">", "Press Stop to end test." );
+            telemetry.update();
         }
 
         // Signal done;
