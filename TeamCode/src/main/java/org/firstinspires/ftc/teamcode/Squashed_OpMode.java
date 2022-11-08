@@ -23,8 +23,8 @@ public class Squashed_OpMode extends LinearOpMode {
     DcMotor frontRight;
     int BUTTON_DELAY = 250;
     DcMotor Linear_Slide_Motor;
-    Servo left_hand;
-    Servo right_hand;
+    Servo leftHand;
+    Servo rightHand;
     static final int CYCLE_MS =  500; // period of each cycle
 
     @Override
@@ -34,8 +34,8 @@ public class Squashed_OpMode extends LinearOpMode {
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         Linear_Slide_Motor =hardwareMap.get(DcMotor.class, "linearSlide");
-        left_hand = hardwareMap.get(Servo.class, "LeftClaw");
-        right_hand = hardwareMap.get(Servo.class, "RightClaw");
+        leftHand = hardwareMap.get(Servo.class, "LeftClaw");
+        rightHand = hardwareMap.get(Servo.class, "RightClaw");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -140,8 +140,8 @@ public class Squashed_OpMode extends LinearOpMode {
         telemetry.update();
 
         if (gamepad1.x && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            left_hand.setPosition(left_close);
-            right_hand.setPosition(right_close);
+            leftHand.setPosition(left_close);
+            rightHand.setPosition(right_close);
             sleep(CYCLE_MS);
             idle();
             telemetry.addData(">", "X is pressed");
@@ -149,8 +149,8 @@ public class Squashed_OpMode extends LinearOpMode {
         }
 
         if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            left_hand.setPosition(left_open);
-            right_hand.setPosition(right_open);
+            leftHand.setPosition(left_open);
+            rightHand.setPosition(right_open);
             sleep(CYCLE_MS);
             idle();
             telemetry.addData(">", "Y is pressed");
