@@ -34,8 +34,8 @@ public class Squashed_OpMode extends LinearOpMode {
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         Linear_Slide_Motor =hardwareMap.get(DcMotor.class, "linearSlide");
-        left_hand = hardwareMap.get(Servo.class, "LeftClaw");
-        right_hand = hardwareMap.get(Servo.class, "RightClaw");
+        left_hand = hardwareMap.get(Servo.class, "leftClaw");
+        right_hand = hardwareMap.get(Servo.class, "rightClaw");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
