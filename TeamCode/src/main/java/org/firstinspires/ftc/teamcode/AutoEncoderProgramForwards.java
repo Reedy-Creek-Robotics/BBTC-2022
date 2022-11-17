@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "Auto")
-public class AutoEncoderProgram extends LinearOpMode {
+@Autonomous(name = "AutoForwards")
+public class AutoEncoderProgramForwards extends LinearOpMode {
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -43,11 +43,11 @@ public class AutoEncoderProgram extends LinearOpMode {
 
             waitForStart();
             //double distance = 17.855;
-            move(100, 0.25);
+            moveForwards(100, 0.25);
         }
 
         // distance is in cm
-        private void move(double distance, double speed) {
+        private void moveForwards(double distance, double speed) {
             double target = distance * 17.855;
             backLeftPos += target;
             frontLeftPos += target;
@@ -75,11 +75,46 @@ public class AutoEncoderProgram extends LinearOpMode {
                 telemetry.addData("frontRight", frontRight.getCurrentPosition());
                 telemetry.addData("frontLeft", frontLeft.getCurrentPosition());
                 telemetry.update();
-
             }
             backLeft.setPower(0);
             backRight.setPower(0);
             frontRight.setPower(0);
             frontLeft.setPower(0);
         }
+
+    private void strafeRight(double distance, double speed) {
+        double target = distance * 17.855;
+        backLeftPos -= target;
+        frontLeftPos += target;
+        backRightPos += target;
+        frontRightPos -= target;
+
+        backLeft.setTargetPosition(backLeftPos);
+        backRight.setTargetPosition(backRightPos);
+        frontLeft.setTargetPosition(frontLeftPos);
+        frontRight.setTargetPosition(frontRightPos);
+
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        backLeft.setPower(speed);
+        backRight.setPower(speed);
+        frontRight.setPower(speed);
+        frontLeft.setPower(speed);
+        while(opModeIsActive() && backLeft.isBusy() && backRight.isBusy() && frontLeft.isBusy() && frontRight.isBusy()) {
+            idle();
+            telemetry.addData("backLeft", backLeft.getCurrentPosition());
+            telemetry.addData("backRight",backRight.getCurrentPosition());
+            telemetry.addData("frontRight", frontRight.getCurrentPosition());
+            telemetry.addData("frontLeft", frontLeft.getCurrentPosition());
+            telemetry.update();
+        }
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        frontRight.setPower(0);
+        frontLeft.setPower(0);
+    }
+
 }

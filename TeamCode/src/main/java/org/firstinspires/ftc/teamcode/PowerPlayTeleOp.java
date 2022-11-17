@@ -12,7 +12,7 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 @TeleOp(name = "PowerPlayTeleOp")
-public class Squashed_OpMode extends LinearOpMode {
+public class PowerPlayTeleOp extends LinearOpMode {
     static final double INCREMENT = 0.05;
     double powerFactor = 0.6;
     BNO055IMU imu;
@@ -21,10 +21,17 @@ public class Squashed_OpMode extends LinearOpMode {
     DcMotor frontLeft;
     DcMotor backRight;
     DcMotor frontRight;
+    DcMotor rightLinearSlide;
     int BUTTON_DELAY = 250;
-    DcMotor Linear_Slide_Motor;
-    Servo left_hand;
-    Servo right_hand;
+    double scissorClosed = 0.7;
+    int scissorOpen = 0;
+    double scissorPosition = scissorClosed;
+
+    DcMotor leftLinearSlide;
+    private double x_pos;
+    private double y_pos;
+    Servo left_servo;
+
     static final int CYCLE_MS =  500; // period of each cycle
 
     @Override
@@ -33,11 +40,13 @@ public class Squashed_OpMode extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        Linear_Slide_Motor =hardwareMap.get(DcMotor.class, "linearSlide");
+        rightLinearSlide = hardwareMap.get(DcMotor.class, "rightLinearSlide");
+        leftLinearSlide = hardwareMap.get(DcMotor.class, "leftLinearSlide");
         //left_hand = hardwareMap.get(Servo.class, "leftClaw");
         //right_hand = hardwareMap.get(Servo.class, "rightClaw");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         initIMU();
 
@@ -45,7 +54,7 @@ public class Squashed_OpMode extends LinearOpMode {
         timeSinceLastPress = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
         while (opModeIsActive()) {
-            processClaw();
+            processScissor();
             processDriving();
             processLinearSlide();
             telemetry.update();
@@ -121,8 +130,11 @@ public class Squashed_OpMode extends LinearOpMode {
 
     private void processLinearSlide(){
         double y = gamepad2.left_stick_y;
-        Linear_Slide_Motor.setPower(y / 2);
-        telemetry.addData("Linear Slide Power", y);
+        leftLinearSlide.setPower(y / 2);
+        rightLinearSlide.setPower(y / 2);
+
+        telemetry.addData("Left Linear Slide Position", leftLinearSlide.getCurrentPosition());
+        telemetry.addData("Right Linear Slide Position", rightLinearSlide.getCurrentPosition());
     }
 
     double  left_close = 0.25; // Start at halfway position
@@ -130,32 +142,22 @@ public class Squashed_OpMode extends LinearOpMode {
     double  right_open = 1;
     double  left_open = 0;
 
-    private void processClaw(){
-        // Display the current value
-        telemetry.addData("Left Servo Position", "%5.2f", left_close);
-        telemetry.addData("Right Servo Position", "%5.2f", right_close);
-        telemetry.addData("Left Servo Position", "%5.2f", left_open);
-        telemetry.addData("Right Servo Position", "%5.2f", right_open);
-        telemetry.addData(">", "Press Stop to end test." );
-        telemetry.update();
+    private void processScissor(){
 
         if (gamepad1.x && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            left_hand.setPosition(left_close);
-            right_hand.setPosition(right_close);
+            left_servo.setPosition(scissorClosed);
+            left_servo.setPosition(scissorOpen);
             sleep(CYCLE_MS);
             idle();
             telemetry.addData(">", "X is pressed");
-            telemetry.update();
         }
 
-        if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            left_hand.setPosition(left_open);
-            right_hand.setPosition(right_open);
-            sleep(CYCLE_MS);
-            idle();
-            telemetry.addData(">", "Y is pressed");
-        }
-
+        // Display the current value
+        telemetry.addData("X Position", "%5.2f", scissorClosed);
+        telemetry.addData("Y Position", "%5.2f", scissorOpen);
+        telemetry.addData("Y Position is open", "");
+        telemetry.addData("X Position is closed", "");
+        telemetry.addData("Actual Servo Position is", "%5.2f", left_servo.getPosition());
     }
 }
 
