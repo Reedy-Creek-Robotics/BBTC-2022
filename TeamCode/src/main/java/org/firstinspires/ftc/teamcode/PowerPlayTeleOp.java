@@ -24,12 +24,10 @@ public class PowerPlayTeleOp extends LinearOpMode {
     DcMotor rightLinearSlide;
     int BUTTON_DELAY = 250;
     double scissorClosed = 0.7;
-    int scissorOpen = 0;
+    double scissorOpen = 0;
     double scissorPosition = scissorClosed;
 
     DcMotor leftLinearSlide;
-    private double x_pos;
-    private double y_pos;
     Servo left_servo;
 
     static final int CYCLE_MS =  500; // period of each cycle
@@ -42,7 +40,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         rightLinearSlide = hardwareMap.get(DcMotor.class, "rightLinearSlide");
         leftLinearSlide = hardwareMap.get(DcMotor.class, "leftLinearSlide");
-        //left_hand = hardwareMap.get(Servo.class, "leftClaw");
+        left_servo = hardwareMap.get(Servo.class, "scissor");
         //right_hand = hardwareMap.get(Servo.class, "rightClaw");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -52,6 +50,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
 
         waitForStart();
         timeSinceLastPress = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        left_servo.setPosition(scissorClosed);
 
         while (opModeIsActive()) {
             processScissor();
@@ -145,8 +144,15 @@ public class PowerPlayTeleOp extends LinearOpMode {
     private void processScissor(){
 
         if (gamepad1.x && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            left_servo.setPosition(scissorClosed);
-            left_servo.setPosition(scissorOpen);
+            //left_servo.setPosition(scissorOpen);
+            if (scissorPosition == scissorOpen) {
+                scissorPosition = scissorClosed;
+            }
+            else {
+                scissorPosition = scissorOpen;
+            }
+            left_servo.setPosition(scissorPosition);
+
             sleep(CYCLE_MS);
             idle();
             telemetry.addData(">", "X is pressed");
