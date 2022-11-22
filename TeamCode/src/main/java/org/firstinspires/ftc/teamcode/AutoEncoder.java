@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Autonomous(name = "AutoForwards")
-public class AutoEncoderProgramForwards extends LinearOpMode {
+public class AutoEncoder extends LinearOpMode {
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
@@ -44,6 +44,7 @@ public class AutoEncoderProgramForwards extends LinearOpMode {
             waitForStart();
             //double distance = 17.855;
             moveForwards(100, 0.25);
+            moveForwards(-100, 0.25);
         }
 
         // distance is in cm

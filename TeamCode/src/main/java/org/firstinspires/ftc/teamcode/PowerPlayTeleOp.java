@@ -22,12 +22,11 @@ public class PowerPlayTeleOp extends LinearOpMode {
     DcMotor backRight;
     DcMotor frontRight;
     DcMotor rightLinearSlide;
-    int BUTTON_DELAY = 250;
-    double scissorClosed = 0.7;
-    double scissorOpen = 0;
-    double scissorPosition = scissorClosed;
-
     DcMotor leftLinearSlide;
+    int BUTTON_DELAY = 250;
+    final double scissorClosed = 0.7;
+    final double scissorOpen = 0;
+    double scissorPosition = scissorClosed;
     Servo left_servo;
 
     static final int CYCLE_MS =  500; // period of each cycle
@@ -56,6 +55,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
             processScissor();
             processDriving();
             processLinearSlide();
+            processLinearSlidePositions();
             telemetry.update();
         }
     }
@@ -136,10 +136,25 @@ public class PowerPlayTeleOp extends LinearOpMode {
         telemetry.addData("Right Linear Slide Position", rightLinearSlide.getCurrentPosition());
     }
 
-    double  left_close = 0.25; // Start at halfway position
-    double  right_close = 0.7;
-    double  right_open = 1;
-    double  left_open = 0;
+    private void processLinearSlidePositions() {
+
+        if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+            leftLinearSlide.setTargetPosition(1840);
+            rightLinearSlide.setTargetPosition(1803);
+        }
+        if (gamepad1.a && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+            leftLinearSlide.setTargetPosition(3048);
+            rightLinearSlide.setTargetPosition(3030);
+        }
+        if (gamepad1.b && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+            leftLinearSlide.setTargetPosition(2013);
+            rightLinearSlide.setTargetPosition(2008);
+        }
+        leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftLinearSlide.setPower(0.15);
+        rightLinearSlide.setPower(0.15);
+    }
 
     private void processScissor(){
 
