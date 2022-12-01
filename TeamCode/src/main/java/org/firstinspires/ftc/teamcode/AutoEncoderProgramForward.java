@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Autonomous(name = "AutoForwards")
-public class AutoEncoder extends LinearOpMode {
+public class AutoEncoderProgramForward extends LinearOpMode {
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
