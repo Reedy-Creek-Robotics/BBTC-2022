@@ -105,6 +105,8 @@ public class OneServoCode extends LinearOpMode {
             // Display the current value
             telemetry.addData("X Position", "%5.2f", x_pos);
             telemetry.addData("Y Position", "%5.2f", y_pos);
+            telemetry.addData("Y Position is open", "");
+            telemetry.addData("X Position is closed", "");
             telemetry.addData("Actual Servo Position is", "%5.2f", left_servo.getPosition());
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();

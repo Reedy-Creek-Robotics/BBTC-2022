@@ -51,7 +51,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 @TeleOp(name = "Linear_Slide")
-public class Linear_Slide extends LinearOpMode {
+public class bothLinearSlide extends LinearOpMode {
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
 
     // Define class members
@@ -61,7 +61,9 @@ public class Linear_Slide extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        motor = hardwareMap.get(DcMotor.class, "Linear_Slide_Motor");
+        DcMotor rightLinearSlide = hardwareMap.get(DcMotor.class, "rightLinearSlide");
+        DcMotor leftLinearSlide = hardwareMap.get(DcMotor.class, "leftLinearSlide");
+
 
         // Wait for the start button
         telemetry.addData(">", "Press Start.");
@@ -73,7 +75,8 @@ public class Linear_Slide extends LinearOpMode {
         // Scan servo till stop pressed.
         while(opModeIsActive()) {
             double y = gamepad1.left_stick_y;
-            motor.setPower(y / 2);
+            leftLinearSlide.setPower(y / 2);
+            rightLinearSlide.setPower(y / 2);
 
             telemetry.addData("Motor Power", y);
             telemetry.update();
