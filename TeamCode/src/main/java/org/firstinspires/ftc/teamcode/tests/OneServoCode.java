@@ -27,12 +27,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -49,55 +49,68 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@TeleOp(name = "CRservo Test")
-public class CrServoTest extends LinearOpMode {
+@Disabled
+@TeleOp(name = "OneServoTest")
+public class OneServoCode extends LinearOpMode {
+
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
+    static final int    CYCLE_MS    =  500;     // period of each cycle
+    static final double MAX_POS     =  1.0;     // Maximum rotational position
+    static final double MIN_POS     =  0.0;     // Minimum rotational position
 
     // Define class members
-    CRServo servo;
-    double  power = -0.5;
-    double power2 = 0.5;
+    Servo   left_servo;
+    double  x_pos = 0.25; // Start at halfway position
+    double  y_pos = 0;
 
     @Override
     public void runOpMode() {
-
-        servo = hardwareMap.get(CRServo.class, "Left_Hand");
+        int BUTTON_DELAY = 250;
+        ElapsedTime timeSinceLastPress = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        // Connect to servo (Assume Robot Left Hand)
+        // Change the text in quotes to match any servo name on your robot.
+        left_servo = hardwareMap.get(Servo.class, "left_hand");
 
         // Wait for the start button
-        telemetry.addData(">", "Press Start." );
+        telemetry.addData(">", "Press Start to scan Servo." );
         telemetry.update();
         waitForStart();
 
-        int BUTTON_DELAY = 250;
-        ElapsedTime timeSinceLastPress = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+
         // Scan servo till stop pressed.
         while(opModeIsActive()){
 
-            if (gamepad1.a && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+            if (gamepad1.dpad_up && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+                x_pos = x_pos + 0.025;
                 timeSinceLastPress.reset();
-                servo.setPower(power);
-                sleep(500);
-                servo.setPower(0);
             }
 
-            if (gamepad1.b && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
+            if (gamepad1.dpad_down && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+                x_pos = x_pos - 0.025;
                 timeSinceLastPress.reset();
-                servo.setPower(power2);
-                sleep(500);
-                servo.setPower(0);
             }
 
-            if (gamepad1.dpad_up && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
-                timeSinceLastPress.reset();
-                power = power + INCREMENT;
+            if (gamepad1.x && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+                left_servo.setPosition(x_pos);
+                sleep(CYCLE_MS);
+                idle();
+                telemetry.addData(">", "X is pressed");
             }
 
-            if (gamepad1.dpad_up && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
-                timeSinceLastPress.reset();
-                power = power - INCREMENT;
+            if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+                left_servo.setPosition(y_pos);
+                sleep(CYCLE_MS);
+                idle();
+                telemetry.addData(">", "Y is pressed");
             }
 
-            telemetry.addData("Servo Power", power);
+            // Display the current value
+            telemetry.addData("X Position", "%5.2f", x_pos);
+            telemetry.addData("Y Position", "%5.2f", y_pos);
+            telemetry.addData("Y Position is open", "");
+            telemetry.addData("X Position is closed", "");
+            telemetry.addData("Actual Servo Position is", "%5.2f", left_servo.getPosition());
+            telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
         }
 

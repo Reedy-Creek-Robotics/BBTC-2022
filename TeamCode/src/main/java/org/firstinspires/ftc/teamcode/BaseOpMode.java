@@ -6,49 +6,54 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "AutoForwards")
-public class AutoEncoderProgramForward extends LinearOpMode {
+public abstract class BaseOpMode extends LinearOpMode {
 
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
+    DcMotor rightLinearSlide;
+    DcMotor leftLinearSlide;
 
     public int distance;
     private int frontLeftPos;
     private int frontRightPos;
     private int backLeftPos;
     private int backRightPos;
+    private int rightLinearSlidePos;
+    private int leftLinearSlidePos;
+
+    protected void initHardware(){
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
+        rightLinearSlide = hardwareMap.get(DcMotor.class, "rightLinearSlide");
+        leftLinearSlide = hardwareMap.get(DcMotor.class, "leftLinearSlide");
 
 
-        @Override
-        public void runOpMode() {
-            frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-            frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-            backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-            backRight = hardwareMap.get(DcMotor.class, "backRight");
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-            backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftPos = 0;
+        backRightPos = 0;
+        frontLeftPos = 0;
+        frontRightPos = 0;
+        rightLinearSlidePos = 0;
+        leftLinearSlidePos = 0;
 
-            backLeftPos = 0;
-            backRightPos = 0;
-            frontLeftPos = 0;
-            frontRightPos = 0;
-
-            waitForStart();
-            //double distance = 17.855;
-            moveForwards(100, 0.25);
-            moveForwards(-100, 0.25);
-        }
+    }
 
         // distance is in cm
-        private void moveForwards(double distance, double speed) {
+        protected void moveForwards(double distance, double speed) {
             double target = distance * 17.855;
             backLeftPos += target;
             frontLeftPos += target;
@@ -83,8 +88,8 @@ public class AutoEncoderProgramForward extends LinearOpMode {
             frontLeft.setPower(0);
         }
 
-    private void strafeRight(double distance, double speed) {
-        double target = distance * 17.855;
+    protected void strafeRight(double distance, double speed) {
+        double target = distance * 17.855 * 1.1;
         backLeftPos -= target;
         frontLeftPos += target;
         backRightPos += target;
@@ -116,6 +121,8 @@ public class AutoEncoderProgramForward extends LinearOpMode {
         backRight.setPower(0);
         frontRight.setPower(0);
         frontLeft.setPower(0);
+
+
     }
 
 }

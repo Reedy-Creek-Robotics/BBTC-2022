@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.old;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,7 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
-@TeleOp(name = "PowerPlayTeleOp")
+@Disabled
+@TeleOp(name = "Squashed_OpMode")
 public class Squashed_OpMode extends LinearOpMode {
     static final double INCREMENT = 0.05;
     double powerFactor = 0.6;
