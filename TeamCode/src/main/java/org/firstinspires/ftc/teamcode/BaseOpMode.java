@@ -144,9 +144,24 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         while(opModeIsActive() && leftLinearSlide.isBusy() && rightLinearSlide.isBusy()) {
             idle();
+            telemetry.addData("leftLinearSlide", leftLinearSlide.getCurrentPosition());
+            telemetry.addData("rightLinearSlide",rightLinearSlide.getCurrentPosition());
+            telemetry.update();
         }
+        leftLinearSlide.setPower(0);
+        rightLinearSlide.setPower(0);
     }
     protected void preLoad(){
         left_servo.setPosition(scissorOpen);
+    }
+    protected void scissor(){
+        /*if (scissorPosition == scissorOpen) {
+            scissorPosition = scissorClosed;
+        }
+        else {
+            scissor.setTargetPosition() = scissorOpen;
+        }
+        left_servo.setPosition(scissorPosition);
+*/
     }
 }
