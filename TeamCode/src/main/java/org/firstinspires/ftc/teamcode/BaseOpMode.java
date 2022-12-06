@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public abstract class BaseOpMode extends LinearOpMode {
 
@@ -12,8 +14,11 @@ public abstract class BaseOpMode extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
+    Servo left_servo;
     DcMotor rightLinearSlide;
     DcMotor leftLinearSlide;
+    final double scissorClosed = 0.7;
+    final double scissorOpen = 0;
 
     public int distance;
     private int frontLeftPos;
@@ -30,6 +35,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         rightLinearSlide = hardwareMap.get(DcMotor.class, "rightLinearSlide");
         leftLinearSlide = hardwareMap.get(DcMotor.class, "leftLinearSlide");
+        left_servo = hardwareMap.get(Servo.class, "scissor");
 
 
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -74,6 +80,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             backRight.setPower(speed);
             frontRight.setPower(speed);
             frontLeft.setPower(speed);
+
             while(opModeIsActive() && backLeft.isBusy() && backRight.isBusy() && frontLeft.isBusy() && frontRight.isBusy()) {
                 idle();
                 telemetry.addData("backLeft", backLeft.getCurrentPosition());
@@ -109,6 +116,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         backRight.setPower(speed);
         frontRight.setPower(speed);
         frontLeft.setPower(speed);
+
         while(opModeIsActive() && backLeft.isBusy() && backRight.isBusy() && frontLeft.isBusy() && frontRight.isBusy()) {
             idle();
             telemetry.addData("backLeft", backLeft.getCurrentPosition());
@@ -124,5 +132,21 @@ public abstract class BaseOpMode extends LinearOpMode {
 
 
     }
+    protected void moveSlides(int position){
+        leftLinearSlide.setTargetPosition(position);
+        rightLinearSlide.setTargetPosition(position);
 
+        leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftLinearSlide.setPower(0.15);
+        rightLinearSlide.setPower(0.15);
+
+        while(opModeIsActive() && leftLinearSlide.isBusy() && rightLinearSlide.isBusy()) {
+            idle();
+        }
+    }
+    protected void preLoad(){
+        left_servo.setPosition(scissorOpen);
+    }
 }

@@ -15,9 +15,15 @@ public class RedLeftAutoRoute1 extends BaseOpMode {
         initHardware();
 
         waitForStart();
+        //moving to high junction
         strafeRight(-160, 0.5);
-        sleep(250);
+        //lifting slides to score
+        moveSlides(4265);
+        moveForwards(10, 0.5);
+        //10 cm -- might change (tweeking will be needed)
+        //open the scissor
         //score
+        sleep(250);
         strafeRight(27.5, 0.5);
         sleep(250);
         moveForwards(-55, 0.5);

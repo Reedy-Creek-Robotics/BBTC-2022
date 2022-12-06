@@ -172,7 +172,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
         }
     }
 
-    private void moveSlides(){
+    protected void moveSlides(){
         leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftLinearSlide.setPower(0.15);
