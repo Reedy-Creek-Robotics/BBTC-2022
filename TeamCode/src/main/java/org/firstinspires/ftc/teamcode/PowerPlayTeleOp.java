@@ -24,7 +24,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
     DcMotor rightLinearSlide;
     DcMotor leftLinearSlide;
     int BUTTON_DELAY = 250;
-    final double scissorClosed = 0.7;
+    final double scissorClosed = 0.8;
     final double scissorOpen = 0;
     double scissorPosition = scissorClosed;
     final int manualSlideOn = 1;
@@ -143,10 +143,18 @@ public class PowerPlayTeleOp extends LinearOpMode {
 
             timeSinceLastPress.reset();
         }
-        double y = gamepad2.left_stick_y;
+        double y = gamepad1.left_trigger;
         leftLinearSlide.setPower(y/2);
         rightLinearSlide.setPower(y/2);
 
+        double x = gamepad1.right_trigger;
+        leftLinearSlide.setPower(-x/2);
+        rightLinearSlide.setPower(-x/2);
+        /*
+        double y = gamepad2.left_stick_y;
+        leftLinearSlide.setPower(y/2);
+        rightLinearSlide.setPower(y/2);
+*/
 
         telemetry.addData("Left Linear Slide Position", leftLinearSlide.getCurrentPosition());
         telemetry.addData("Right Linear Slide Position", rightLinearSlide.getCurrentPosition());
@@ -181,7 +189,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
 
     private void processScissor(){
 
-        if (gamepad1.x && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+        if (gamepad1.right_bumper && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
             //left_servo.setPosition(scissorOpen);
             if (scissorPosition == scissorOpen) {
                 scissorPosition = scissorClosed;

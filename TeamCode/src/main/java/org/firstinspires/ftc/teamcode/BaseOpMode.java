@@ -1,22 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
 //ticks to go one cm: 17.887
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 public abstract class BaseOpMode extends LinearOpMode {
 
+    Servo scissor;
+    DcMotor rightLinearSlide;
+    DcMotor leftLinearSlide;
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
-    Servo left_servo;
-    DcMotor rightLinearSlide;
-    DcMotor leftLinearSlide;
     final double scissorClosed = 0.7;
     final double scissorOpen = 0;
 
@@ -25,8 +23,8 @@ public abstract class BaseOpMode extends LinearOpMode {
     private int frontRightPos;
     private int backLeftPos;
     private int backRightPos;
-    private int rightLinearSlidePos;
-    private int leftLinearSlidePos;
+    private double scissorPosition;
+
 
     protected void initHardware(){
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
@@ -35,7 +33,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         rightLinearSlide = hardwareMap.get(DcMotor.class, "rightLinearSlide");
         leftLinearSlide = hardwareMap.get(DcMotor.class, "leftLinearSlide");
-        left_servo = hardwareMap.get(Servo.class, "scissor");
+        scissor = hardwareMap.get(Servo.class, "scissor");
 
 
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -47,14 +45,12 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         backLeftPos = 0;
         backRightPos = 0;
         frontLeftPos = 0;
         frontRightPos = 0;
-        rightLinearSlidePos = 0;
-        leftLinearSlidePos = 0;
 
     }
 
@@ -129,9 +125,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         backRight.setPower(0);
         frontRight.setPower(0);
         frontLeft.setPower(0);
-
-
     }
+
     protected void moveSlides(int position){
         leftLinearSlide.setTargetPosition(position);
         rightLinearSlide.setTargetPosition(position);
@@ -148,20 +143,21 @@ public abstract class BaseOpMode extends LinearOpMode {
             telemetry.addData("rightLinearSlide",rightLinearSlide.getCurrentPosition());
             telemetry.update();
         }
+        telemetry.addData("leftLinearSlide", leftLinearSlide.getCurrentPosition());
+        telemetry.addData("rightLinearSlide",rightLinearSlide.getCurrentPosition());
+        telemetry.update();
+
         leftLinearSlide.setPower(0);
         rightLinearSlide.setPower(0);
     }
+
     protected void preLoad(){
-        left_servo.setPosition(scissorOpen);
+        scissor.setPosition(scissorOpen);
+        moveSlides(100);
     }
-    protected void scissor(){
-        /*if (scissorPosition == scissorOpen) {
-            scissorPosition = scissorClosed;
-        }
-        else {
-            scissor.setTargetPosition() = scissorOpen;
-        }
-        left_servo.setPosition(scissorPosition);
-*/
+
+    protected void scissor(double scissorPosition){
+        scissor.setPosition(scissorPosition);
+        sleep(200);
     }
 }
