@@ -8,20 +8,37 @@ public class RedLeftAutoRoute1 extends BaseOpMode {
     public void runOpMode() throws InterruptedException {
 
         initHardware();
-        preLoad();
 
         waitForStart();
-        //moving to high junction
-        //strafeRight(-160, 0.5);
-        //lifting slides to score
-        moveSlides(-1000);
-        //moveForwards(10, 0.5);
-        //10 cm -- might change (tweeking will be needed)
+        preLoad();
+        moveForwards(133, 0.5);
+        strafeRight(33, 0.5);
+        moveSlides(4260);
+        moveForwards(10,0.5);
+        scissor(scissorOpen);
+        sleep(250);
         scissor(scissorClosed);
-        //score
-        //sleep(250);
-        //strafeRight(27.5, 0.5);
-        //sleep(250);
-        //moveForwards(-55, 0.5);
+        strafeRight(-92, 0.5);
+        moveSlides(-4260);
+    }
+
+    public void backup() {
+        preLoad();
+        strafeRight(-160, 0.5);
+        moveSlides(4260);
+        moveForwards(10, 0.5);
+        //10 cm -- might change (tweaking will be needed)
+        //scissor(scissorClosed);
+        //sleep(5000); //for test
+        //scissor(scissorOpen); //for test
+        sleep(250);
+        scissor(scissorClosed);
+        sleep(250);
+        moveForwards(-10, 0.5);
+        sleep(250);
+        strafeRight(27.5, 0.5);
+        sleep(250);
+        moveForwards(-55, 0.5);
+        //sleep(20000); //remove after test!!!!!!!!!!!!!!
     }
 }

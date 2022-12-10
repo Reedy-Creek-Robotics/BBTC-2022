@@ -89,6 +89,8 @@ public abstract class BaseOpMode extends LinearOpMode {
             backRight.setPower(0);
             frontRight.setPower(0);
             frontLeft.setPower(0);
+
+            sleep(100);
         }
 
     protected void strafeRight(double distance, double speed) {
@@ -125,11 +127,13 @@ public abstract class BaseOpMode extends LinearOpMode {
         backRight.setPower(0);
         frontRight.setPower(0);
         frontLeft.setPower(0);
+
+        sleep(100);
     }
 
     protected void moveSlides(int position){
-        leftLinearSlide.setTargetPosition(position);
-        rightLinearSlide.setTargetPosition(position);
+        leftLinearSlide.setTargetPosition(-position);
+        rightLinearSlide.setTargetPosition(-position);
 
         leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -147,13 +151,13 @@ public abstract class BaseOpMode extends LinearOpMode {
         telemetry.addData("rightLinearSlide",rightLinearSlide.getCurrentPosition());
         telemetry.update();
 
-        leftLinearSlide.setPower(0);
-        rightLinearSlide.setPower(0);
+        //leftLinearSlide.setPower(0);
+        //rightLinearSlide.setPower(0);
     }
 
     protected void preLoad(){
         scissor.setPosition(scissorOpen);
-        moveSlides(100);
+        moveSlides(500);
     }
 
     protected void scissor(double scissorPosition){

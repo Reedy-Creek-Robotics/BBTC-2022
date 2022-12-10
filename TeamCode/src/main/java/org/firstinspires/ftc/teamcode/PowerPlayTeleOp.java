@@ -46,7 +46,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
         //right_hand = hardwareMap.get(Servo.class, "rightClaw");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         initIMU();
 
