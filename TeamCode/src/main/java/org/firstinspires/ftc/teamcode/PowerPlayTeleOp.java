@@ -24,9 +24,12 @@ public class PowerPlayTeleOp extends LinearOpMode {
     DcMotor rightLinearSlide;
     DcMotor leftLinearSlide;
     int BUTTON_DELAY = 250;
-    final double scissorClosed = 0.7;
+    final double scissorClosed = 0.8;
     final double scissorOpen = 0;
     double scissorPosition = scissorClosed;
+    final int manualSlideOn = 1;
+    final int manualSlideOff = 0;
+    int slideToggle = manualSlideOff;
     Servo left_servo;
 
     static final int CYCLE_MS =  500; // period of each cycle
@@ -43,7 +46,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
         //right_hand = hardwareMap.get(Servo.class, "rightClaw");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         initIMU();
 
@@ -128,9 +131,30 @@ public class PowerPlayTeleOp extends LinearOpMode {
     }
 
     private void processLinearSlide(){
+        if (gamepad1.left_bumper &&(timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
+            if (slideToggle == manualSlideOff){
+                slideToggle = manualSlideOn;
+                telemetry.addData("Manual Slide", "ON");
+            }
+            else{
+                slideToggle = manualSlideOff;
+                telemetry.addData("Manual Slide", "OFF");
+            }
+
+            timeSinceLastPress.reset();
+        }
+        double y = gamepad1.left_trigger;
+        leftLinearSlide.setPower(y/2);
+        rightLinearSlide.setPower(y/2);
+
+        double x = gamepad1.right_trigger;
+        leftLinearSlide.setPower(-x/2);
+        rightLinearSlide.setPower(-x/2);
+        /*
         double y = gamepad2.left_stick_y;
-        leftLinearSlide.setPower(y / 2);
-        rightLinearSlide.setPower(y / 2);
+        leftLinearSlide.setPower(y/2);
+        rightLinearSlide.setPower(y/2);
+*/
 
         telemetry.addData("Left Linear Slide Position", leftLinearSlide.getCurrentPosition());
         telemetry.addData("Right Linear Slide Position", rightLinearSlide.getCurrentPosition());
@@ -141,15 +165,22 @@ public class PowerPlayTeleOp extends LinearOpMode {
         if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
             leftLinearSlide.setTargetPosition(1840);
             rightLinearSlide.setTargetPosition(1803);
+            moveSlides();
+
         }
         if (gamepad1.a && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
             leftLinearSlide.setTargetPosition(3048);
             rightLinearSlide.setTargetPosition(3030);
+            moveSlides();
         }
         if (gamepad1.b && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
             leftLinearSlide.setTargetPosition(2013);
             rightLinearSlide.setTargetPosition(2008);
+            moveSlides();
         }
+    }
+
+    protected void moveSlides(){
         leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         leftLinearSlide.setPower(0.15);
@@ -158,7 +189,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
 
     private void processScissor(){
 
-        if (gamepad1.x && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+        if (gamepad1.right_bumper && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
             //left_servo.setPosition(scissorOpen);
             if (scissorPosition == scissorOpen) {
                 scissorPosition = scissorClosed;
@@ -174,11 +205,9 @@ public class PowerPlayTeleOp extends LinearOpMode {
         }
 
         // Display the current value
-        telemetry.addData("X Position", "%5.2f", scissorClosed);
-        telemetry.addData("Y Position", "%5.2f", scissorOpen);
-        telemetry.addData("Y Position is open", "");
-        telemetry.addData("X Position is closed", "");
-        telemetry.addData("Actual Servo Position is", "%5.2f", left_servo.getPosition());
+        telemetry.addData("Scissor constants",  "(open=%5.2f, closed=%5.2f)", scissorOpen, scissorClosed);
+        telemetry.addData("Desired Scissor Position", scissorPosition);
+        telemetry.addData("Actual Scissor Position", "%5.2f", left_servo.getPosition());
     }
 }
 

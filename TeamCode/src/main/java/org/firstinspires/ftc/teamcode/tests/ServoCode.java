@@ -27,12 +27,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -50,36 +49,86 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@TeleOp(name = "Linear_Slide")
-public class bothLinearSlide extends LinearOpMode {
+@Disabled
+@TeleOp(name = "ServoTest")
+public class ServoCode extends LinearOpMode {
+
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
+    static final int    CYCLE_MS    =  500;     // period of each cycle
+    static final double MAX_POS     =  1.0;     // Maximum rotational position
+    static final double MIN_POS     =  0.0;     // Minimum rotational position
 
     // Define class members
-    DcMotor motor;
-    double  power = 0;
+    Servo   left_servo;
+    Servo   right_servo;
+    double  left_close = 0.25; // Start at halfway position
+    double  right_close = 0.7;
+    double  right_open = 1;
+    double  left_open = 0;
 
     @Override
     public void runOpMode() {
-
-        DcMotor rightLinearSlide = hardwareMap.get(DcMotor.class, "rightLinearSlide");
-        DcMotor leftLinearSlide = hardwareMap.get(DcMotor.class, "leftLinearSlide");
-
+        int BUTTON_DELAY = 250;
+        ElapsedTime timeSinceLastPress = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        // Connect to servo (Assume Robot Left Hand)
+        // Change the text in quotes to match any servo name on your robot.
+        left_servo = hardwareMap.get(Servo.class, "left_hand");
+        right_servo = hardwareMap.get(Servo.class, "right_hand");
 
         // Wait for the start button
-        telemetry.addData(">", "Press Start.");
+        telemetry.addData(">", "Press Start to scan Servo." );
         telemetry.update();
         waitForStart();
 
-        int BUTTON_DELAY = 250;
-        ElapsedTime timeSinceLastPress = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        // Scan servo till stop pressed.
-        while(opModeIsActive()) {
-            double y = gamepad1.left_stick_y;
-            leftLinearSlide.setPower(y / 2);
-            rightLinearSlide.setPower(y / 2);
 
-            telemetry.addData("Motor Power", y);
+        // Scan servo till stop pressed.
+        while(opModeIsActive()){
+
+            if (gamepad1.dpad_up && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+                left_close = left_close + 0.025;
+                timeSinceLastPress.reset();
+            }
+
+            if (gamepad1.dpad_down && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+                left_close = left_close - 0.025;
+                timeSinceLastPress.reset();
+            }
+
+            if (gamepad1.dpad_right && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+                right_close = right_close + 0.025;
+                timeSinceLastPress.reset();
+            }
+
+            if (gamepad1.dpad_left && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+                right_close = right_close - 0.025;
+                timeSinceLastPress.reset();
+            }
+
+            // Display the current value
+            telemetry.addData("Left Servo Position", "%5.2f", left_close);
+            telemetry.addData("Right Servo Position", "%5.2f", right_close);
+            telemetry.addData("Left Servo Position", "%5.2f", left_open);
+            telemetry.addData("Right Servo Position", "%5.2f", right_open);
+            telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
+
+            if (gamepad1.x && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+                left_servo.setPosition(left_close);
+                right_servo.setPosition(right_close);
+                sleep(CYCLE_MS);
+                idle();
+                telemetry.addData(">", "X is pressed");
+                telemetry.update();
+            }
+
+            if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+                left_servo.setPosition(left_open);
+                right_servo.setPosition(right_open);
+                sleep(CYCLE_MS);
+                idle();
+                telemetry.addData(">", "Y is pressed");
+                telemetry.update();
+            }
         }
 
         // Signal done;

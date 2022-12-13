@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -50,8 +50,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@TeleOp(name = "Motor test")
-public class MotorTest extends LinearOpMode {
+@Disabled
+@TeleOp(name = "Linear_Slide")
+public class bothLinearSlide extends LinearOpMode {
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
 
     // Define class members
@@ -61,37 +62,24 @@ public class MotorTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        motor = hardwareMap.get(DcMotor.class, "Top_Left");
+        DcMotor rightLinearSlide = hardwareMap.get(DcMotor.class, "rightLinearSlide");
+        DcMotor leftLinearSlide = hardwareMap.get(DcMotor.class, "leftLinearSlide");
+
 
         // Wait for the start button
-        telemetry.addData(">", "Press Start." );
+        telemetry.addData(">", "Press Start.");
         telemetry.update();
         waitForStart();
 
         int BUTTON_DELAY = 250;
         ElapsedTime timeSinceLastPress = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         // Scan servo till stop pressed.
-        while(opModeIsActive()){
+        while(opModeIsActive()) {
+            double y = gamepad1.left_stick_y;
+            leftLinearSlide.setPower(y / 2);
+            rightLinearSlide.setPower(y / 2);
 
-            if (gamepad1.a && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-                timeSinceLastPress.reset();
-                motor.setPower(power);
-            }
-
-            if (gamepad1.b && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
-                timeSinceLastPress.reset();
-                motor.setPower(0);
-            }
-
-            if (gamepad1.dpad_up){
-                power = power + INCREMENT;
-            }
-
-            if (gamepad1.dpad_up){
-                power = power - INCREMENT;
-            }
-
-            telemetry.addData("Motor Power", power);
+            telemetry.addData("Motor Power", y);
             telemetry.update();
         }
 

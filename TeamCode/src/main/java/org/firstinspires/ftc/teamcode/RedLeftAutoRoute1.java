@@ -1,63 +1,45 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Autonomous(name = "RedLeftRoute1")
-
-public class RedLeftAutoRoute1 extends LinearOpMode{
-
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backRight;
-    private DcMotor backLeft;
-
-    public int distance;
-    private int frontLeftPos;
-    private int frontRightPos;
-    private int backLeftPos;
-    private int backRightPos;
-
+public class RedLeftAutoRoute1 extends BaseOpMode {
     @Override
-    public void runOpMode() {
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
+    public void runOpMode() throws InterruptedException {
 
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        backLeftPos = 0;
-        backRightPos = 0;
-        frontLeftPos = 0;
-        frontRightPos = 0;
+        initHardware();
+        //have the camera read the signal cone
 
         waitForStart();
-        //double distance = 17.855;
-        moveForwards(24, 0.25);
+        preLoad();
+        moveForwards(133, 0.5);
+        strafeRight(33, 0.5);
+        moveSlides(4260);
+        moveForwards(10,0.5);
+        scissor(scissorOpen);
+        sleep(250);
+        scissor(scissorClosed);
+        strafeRight(-92, 0.5);
+        moveSlides(-4260);
     }
 
-    // distance is in cm
-    private void moveForwards(double distance, double speed) {
-        double target = distance * 17.855;
-        backLeftPos += target;
-        frontLeftPos += target;
-        backRightPos += target;
-        frontRightPos += target;
-
-        backLeft.setTargetPosition(backLeftPos);
-        backRight.setTargetPosition(backRightPos);
-        frontLeft.setTargetPosition(frontLeftPos);
-        frontRight.setTargetPosition(frontRightPos);
+    public void backup() {
+        preLoad();
+        strafeRight(-160, 0.5);
+        moveSlides(4260);
+        moveForwards(10, 0.5);
+        //10 cm -- might change (tweaking will be needed)
+        //scissor(scissorClosed);
+        //sleep(5000); //for test
+        //scissor(scissorOpen); //for test
+        sleep(250);
+        scissor(scissorClosed);
+        sleep(250);
+        moveForwards(-10, 0.5);
+        sleep(250);
+        strafeRight(27.5, 0.5);
+        sleep(250);
+        moveForwards(-55, 0.5);
+        //sleep(20000); //remove after test!!!!!!!!!!!!!!
     }
 }
