@@ -8,6 +8,7 @@ public class RedLeftAutoRoute1 extends BaseOpMode {
     public void runOpMode() throws InterruptedException {
 
         initHardware();
+        //have the camera read the signal cone
 
         waitForStart();
         preLoad();
