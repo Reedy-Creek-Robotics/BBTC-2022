@@ -9,8 +9,10 @@ public class RedLeftAutoRoute1 extends BaseOpMode {
 
         initHardware();
         //have the camera read the signal cone
-
+        int tag = detectAprilTags();
         waitForStart();
+        telemetry.addData("Tag Detected", tag);
+        telemetry.update();
         preLoad();
         moveForwards(133, 0.5);
         strafeRight(33, 0.5);

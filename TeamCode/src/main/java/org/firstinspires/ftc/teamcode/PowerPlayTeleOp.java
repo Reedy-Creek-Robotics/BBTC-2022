@@ -170,8 +170,8 @@ public class PowerPlayTeleOp extends LinearOpMode {
     private void processLinearSlidePositions() {
 
         if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-4436);
-            rightLinearSlide.setTargetPosition(-4436);
+            leftLinearSlide.setTargetPosition(-4240);
+            rightLinearSlide.setTargetPosition(-4240);
             moveSlides();
             //high
 
