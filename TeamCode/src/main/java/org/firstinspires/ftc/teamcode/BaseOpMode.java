@@ -47,7 +47,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
-    final double scissorClosed = 0.7;
+    final double scissorClosed = 0.5;
     final double scissorOpen = 0;
 
     public int distance;
@@ -190,8 +190,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftLinearSlide.setPower(0.15);
-        rightLinearSlide.setPower(0.15);
+        leftLinearSlide.setPower(0.5);
+        rightLinearSlide.setPower(0.5);
 
         while(opModeIsActive() && leftLinearSlide.isBusy() && rightLinearSlide.isBusy()) {
             idle();
@@ -209,6 +209,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     protected void preLoad(){
         scissor.setPosition(scissorOpen);
+        sleep(500);
         moveSlides(500);
     }
 
@@ -216,6 +217,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         scissor.setPosition(scissorPosition);
         sleep(200);
     }
+
 
     protected int detectAprilTags(){
         telemetry.setMsTransmissionInterval(50);

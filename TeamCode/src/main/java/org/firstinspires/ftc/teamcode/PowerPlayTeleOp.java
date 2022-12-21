@@ -24,7 +24,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
     DcMotor rightLinearSlide;
     DcMotor leftLinearSlide;
     int BUTTON_DELAY = 250;
-    final double scissorClosed = 0.8;
+    final double scissorClosed = 0.5;
     final double scissorOpen = 0;
     double scissorPosition = scissorClosed;
     final int manualSlideOn = 1;
@@ -142,13 +142,13 @@ public class PowerPlayTeleOp extends LinearOpMode {
             double y = gamepad1.left_trigger;
             double x = gamepad1.right_trigger;
             if (y >0){
-                leftLinearSlide.setPower(y / 2);
-                rightLinearSlide.setPower(y / 2);
+                leftLinearSlide.setPower(y);
+                rightLinearSlide.setPower(y);
             }
 
             if (x >0){
-                leftLinearSlide.setPower(-x / 2);
-                rightLinearSlide.setPower(-x / 2);
+                leftLinearSlide.setPower(-x);
+                rightLinearSlide.setPower(-x);
             }
             if (x == 0 && y == 0){
                 leftLinearSlide.setPower(0);
@@ -177,15 +177,15 @@ public class PowerPlayTeleOp extends LinearOpMode {
 
         }
         if (gamepad1.a && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-2013);
-            rightLinearSlide.setTargetPosition(-2008);
+            leftLinearSlide.setTargetPosition(-1861);
+            rightLinearSlide.setTargetPosition(-1861);
             moveSlides();
             //low
         }
 
         if (gamepad1.b && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-3048);
-            rightLinearSlide.setTargetPosition(-3030);
+            leftLinearSlide.setTargetPosition(-3160);
+            rightLinearSlide.setTargetPosition(-3160);
             moveSlides();
             //medium
         }
@@ -194,8 +194,8 @@ public class PowerPlayTeleOp extends LinearOpMode {
     protected void moveSlides() {
         leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftLinearSlide.setPower(0.3);
-        rightLinearSlide.setPower(0.3);
+        leftLinearSlide.setPower(0.5);
+        rightLinearSlide.setPower(0.5);
     }
 
     private void processScissor() {

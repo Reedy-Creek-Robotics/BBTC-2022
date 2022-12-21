@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous (name = "RedRightParking")
-public class RedRightParking extends BaseOpMode{
+public class RedLeftParking extends BaseOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
