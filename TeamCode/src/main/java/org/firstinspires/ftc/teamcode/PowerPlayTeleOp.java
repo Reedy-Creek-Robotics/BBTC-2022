@@ -133,29 +133,31 @@ public class PowerPlayTeleOp extends LinearOpMode {
         df.setRoundingMode(RoundingMode.FLOOR);
         return df.format(number);
     }
-
+    //manual control of the linear slides
     private void processLinearSlide() {
         if (gamepad1.left_trigger >0 || gamepad1.right_trigger >0){
             leftLinearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightLinearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            double y = gamepad1.left_trigger;
-            double x = gamepad1.right_trigger;
-            if (y >0){
+            double y = gamepad1.left_trigger; // down
+            double x = gamepad1.right_trigger; // up
+            if (y > 0){
                 leftLinearSlide.setPower(y);
                 rightLinearSlide.setPower(y);
             }
-
-            if (x >0){
+            if (x > 0){
                 leftLinearSlide.setPower(-x);
                 rightLinearSlide.setPower(-x);
+            }
+            if (leftLinearSlide.getCurrentPosition() >= 0 || rightLinearSlide.getCurrentPosition() >= 0){
+                leftLinearSlide.setPower(0);
+                rightLinearSlide.setPower(0);
             }
             if (x == 0 && y == 0){
                 leftLinearSlide.setPower(0);
                 rightLinearSlide.setPower(0);
             }
         }
-
 
         /*
         double y = gamepad2.left_stick_y;
@@ -231,10 +233,11 @@ public class PowerPlayTeleOp extends LinearOpMode {
         }
     }
 
+    // grabbing the cone from ready position
     private void processGrab() {
         if (gamepad1.left_bumper && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-75);
-            rightLinearSlide.setTargetPosition(-75);
+            leftLinearSlide.setTargetPosition(0);
+            rightLinearSlide.setTargetPosition(0);
             moveSlides();
             while(opModeIsActive() && leftLinearSlide.isBusy() && rightLinearSlide.isBusy()) {
                 idle();
