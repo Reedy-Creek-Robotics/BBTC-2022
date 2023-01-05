@@ -139,8 +139,8 @@ public class PowerPlayTeleOp extends LinearOpMode {
             leftLinearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightLinearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            double y = gamepad1.left_trigger; // down
-            double x = gamepad1.right_trigger; // up
+            double y = gamepad1.left_trigger * 0.5; // down
+            double x = gamepad1.right_trigger * 0.5; // up
             if (y > 0){
                 leftLinearSlide.setPower(y);
                 rightLinearSlide.setPower(y);
@@ -153,7 +153,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
                 leftLinearSlide.setPower(0);
                 rightLinearSlide.setPower(0);
             }
-            if (x == 0 && y == 0){
+            if (x == 0 || y == 0){
                 leftLinearSlide.setPower(0);
                 rightLinearSlide.setPower(0);
             }
@@ -172,22 +172,22 @@ public class PowerPlayTeleOp extends LinearOpMode {
     private void processLinearSlidePositions() {
 
         if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-4240);
-            rightLinearSlide.setTargetPosition(-4240);
+            leftLinearSlide.setTargetPosition(-4000);
+            rightLinearSlide.setTargetPosition(-4000);
             moveSlides();
             //high
 
         }
         if (gamepad1.a && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-1861);
-            rightLinearSlide.setTargetPosition(-1861);
+            leftLinearSlide.setTargetPosition(-1700);
+            rightLinearSlide.setTargetPosition(-1700);
             moveSlides();
             //low
         }
 
         if (gamepad1.b && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-3160);
-            rightLinearSlide.setTargetPosition(-3160);
+            leftLinearSlide.setTargetPosition(-2900);
+            rightLinearSlide.setTargetPosition(-2900);
             moveSlides();
             //medium
         }

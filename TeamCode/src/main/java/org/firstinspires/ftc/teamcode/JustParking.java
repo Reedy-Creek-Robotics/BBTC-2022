@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous (name = "RedRightParking")
-public class RedLeftParking extends BaseOpMode{
+@Autonomous (name = "JustParking")
+public class JustParking extends BaseOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -15,6 +15,7 @@ public class RedLeftParking extends BaseOpMode{
         waitForStart();
         telemetry.addData("Tag Detected", tag);
         telemetry.update();
+        //preLoad();
         if (tag == 1){
             strafeRight(-63, 0.5); //no strafe left need that in future ~Aiden
             moveForwards(78, 0.5);
