@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 @TeleOp(name = "PowerPlayTeleOp")
 public class PowerPlayTeleOp extends LinearOpMode {
     static final double INCREMENT = 0.05;
-    double powerFactor = 0.6;
+    double powerFactor = 0.85;
     BNO055IMU imu;
     ElapsedTime timeSinceLastPress;
     DcMotor backLeft;

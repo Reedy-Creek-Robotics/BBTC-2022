@@ -95,7 +95,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                camera.startStreaming(640,480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
                 //camera.startStreaming(800,448, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
