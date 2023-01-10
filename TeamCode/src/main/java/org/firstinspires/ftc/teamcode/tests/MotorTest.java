@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
@@ -120,6 +121,7 @@ public class MotorTest extends LinearOpMode {
             }
 
             telemetry.addData("Motor Power", power);
+            processCurrentStats();
             telemetry.update();
         }
 
@@ -128,7 +130,60 @@ public class MotorTest extends LinearOpMode {
         telemetry.update();
     }
 
-    public void getCurrent() {
-        telemetry.addLine("frontLeft: " + ((DcMotorEx)frontLeft).getCurrent(CurrentUnit.AMPS));
+    double minFrontRightCurrent = Double.MAX_VALUE;
+    double maxFrontRightCurrent = Double.MIN_VALUE;
+    double minFrontLeftCurrent= Double.MAX_VALUE;
+    double maxFrontLeftCurrent = Double.MIN_VALUE;
+    double minBackRightCurrent = Double.MAX_VALUE;
+    double maxBackRightCurrent = Double.MIN_VALUE;
+    double minBackLeftCurrent = Double.MAX_VALUE;
+    double maxBackLeftCurrent = Double.MIN_VALUE;
+
+    public void processCurrentStats() {
+        double frontLeftCurrent = ((DcMotorEx)frontLeft).getCurrent(CurrentUnit.AMPS);
+        if( frontLeftCurrent < minFrontLeftCurrent ) {
+            minFrontLeftCurrent = frontLeftCurrent;
+        }
+        if( frontLeftCurrent > maxFrontLeftCurrent ) {
+            maxFrontLeftCurrent = frontLeftCurrent;
+        }
+
+        double frontRightCurrent = ((DcMotorEx)frontRight).getCurrent(CurrentUnit.AMPS);
+        if( frontRightCurrent < minFrontRightCurrent ) {
+            minFrontRightCurrent = frontRightCurrent;
+        }
+        if( frontRightCurrent > maxFrontRightCurrent ) {
+            maxFrontRightCurrent = frontRightCurrent;
+        }
+
+        double backLeftCurrent = ((DcMotorEx)backLeft).getCurrent(CurrentUnit.AMPS);
+        if( backLeftCurrent < minBackLeftCurrent ) {
+            minBackLeftCurrent = backLeftCurrent;
+        }
+        if( backLeftCurrent > maxBackLeftCurrent ) {
+            maxBackLeftCurrent = backLeftCurrent;
+        }
+
+        double backRightCurrent = ((DcMotorEx)backRight).getCurrent(CurrentUnit.AMPS);
+        if( backRightCurrent < minBackRightCurrent ) {
+            minBackRightCurrent = backRightCurrent;
+        }
+        if( backRightCurrent > maxBackRightCurrent ) {
+            maxBackRightCurrent = backRightCurrent;
+        }
+
+        String flString = "frontLeft: current=" + frontLeftCurrent + ", max=" + maxFrontLeftCurrent + ", min=" + minFrontLeftCurrent;
+        String frString = "frontRight: current=" + frontRightCurrent + ", max=" + maxFrontRightCurrent + ", min=" + minFrontRightCurrent;
+        String blString = "backLeft: current=" + backLeftCurrent + ", max=" + maxBackLeftCurrent + ", min=" + minBackLeftCurrent;
+        String brString = "backRight: current=" + backRightCurrent + ", max=" + maxBackRightCurrent + ", min=" + minBackRightCurrent;
+
+        telemetry.addLine(flString);
+        RobotLog.d(flString);
+        telemetry.addLine(frString);
+        RobotLog.d(frString);
+        telemetry.addLine(blString);
+        RobotLog.d(blString);
+        telemetry.addLine(brString);
+        RobotLog.d(brString);
     }
 }
