@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -15,7 +20,7 @@ import java.text.DecimalFormat;
 public class FieldRelativeMecanumDrive extends LinearOpMode {
     static final double INCREMENT = 0.05;
     double powerFactor = 0.85;
-    BNO055IMU imu;
+    IMU imu;
     ElapsedTime timeSinceLastPress;
     DcMotor backLeft;
     DcMotor frontLeft;
@@ -46,10 +51,12 @@ public class FieldRelativeMecanumDrive extends LinearOpMode {
     }
 
     private void processDriving() {
-        double y = Math.pow(-gamepad1.left_stick_y, 3);
-        double x = Math.pow(gamepad1.left_stick_x, 3);
+        double y = Math.pow(gamepad1.left_stick_y, 3);
+        double x = Math.pow(-gamepad1.left_stick_x, 3);
         double rx = Math.pow(gamepad1.right_stick_x, 3);
-        double botHeading = -imu.getAngularOrientation().firstAngle;
+
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        double botHeading = orientation.getYaw(AngleUnit.DEGREES);
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
@@ -88,7 +95,13 @@ public class FieldRelativeMecanumDrive extends LinearOpMode {
     }
 
     private void initIMU() {
-        this.imu = hardwareMap.get(BNO055IMU.class, "imu");
+        this.imu = hardwareMap.get(IMU.class, "imu");
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        /*
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
@@ -101,8 +114,13 @@ public class FieldRelativeMecanumDrive extends LinearOpMode {
             telemetry.addLine("Calibrating");
             telemetry.update();
         }
+        */
+
+        // test that the IMU is initialized?
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        double botHeading = orientation.getYaw(AngleUnit.DEGREES);
         telemetry.clear();
-        telemetry.addData("Calibration Status", imu.getCalibrationStatus().toString());
+        telemetry.addLine("Calibration Status: " + Double.valueOf(botHeading).toString());
         telemetry.update();
     }
 
