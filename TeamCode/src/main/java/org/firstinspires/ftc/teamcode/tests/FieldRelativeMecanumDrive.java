@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -20,7 +21,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
-@Disabled
 @TeleOp(name = "FieldRelativeMecanumDrive")
 public class FieldRelativeMecanumDrive extends LinearOpMode {
     static final double INCREMENT = 0.05;
@@ -60,18 +60,21 @@ public class FieldRelativeMecanumDrive extends LinearOpMode {
         double x = Math.pow(gamepad1.left_stick_x, 3);
         double rx = Math.pow(gamepad1.right_stick_x, 3);
 
-        //YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        //double botHeading = -orientation.getYaw(AngleUnit.RADIANS);
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        double botHeading = -orientation.getYaw(AngleUnit.RADIANS);
+        /*
         Orientation myRobotOrientation = imu.getRobotOrientation(
                 AxesReference.INTRINSIC,
                 AxesOrder.ZYX,
                 AngleUnit.RADIANS
         );
-
         float botHeading = -myRobotOrientation.firstAngle;
+        */
+
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
         telemetry.addLine("Bot Heading = " + botHeading);
+        RobotLog.d("Bot Heading = " + botHeading);
 
         if (gamepad1.dpad_up && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
             timeSinceLastPress.reset();
@@ -130,14 +133,17 @@ public class FieldRelativeMecanumDrive extends LinearOpMode {
         */
 
         // test that the IMU is initialized?
-        //YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        //double botHeading = orientation.getYaw(AngleUnit.RADIANS);
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        double botHeading = orientation.getYaw(AngleUnit.RADIANS);
+        /*
         Orientation myRobotOrientation = imu.getRobotOrientation(
                 AxesReference.INTRINSIC,
                 AxesOrder.ZYX,
                 AngleUnit.RADIANS
         );
         double botHeading = myRobotOrientation.firstAngle;
+        */
+
         telemetry.clear();
         telemetry.addLine("Calibration Status: " + Double.valueOf(botHeading).toString());
         telemetry.update();

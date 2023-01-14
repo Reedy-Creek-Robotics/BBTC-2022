@@ -90,6 +90,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
         float botHeading = -myRobotOrientation.firstAngle;
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
+        telemetry.addData("Bot Heading", botHeading);
 
         if (gamepad1.dpad_up && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
             timeSinceLastPress.reset();
@@ -161,8 +162,8 @@ public class PowerPlayTeleOp extends LinearOpMode {
             leftLinearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightLinearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            double y = gamepad1.left_trigger * 0.5; // down
-            double x = gamepad1.right_trigger * 0.5; // up
+            double y = gamepad1.left_trigger * 0.8; // down
+            double x = gamepad1.right_trigger * 0.8; // up
             if (y > 0){
                 leftLinearSlide.setPower(y);
                 rightLinearSlide.setPower(y);
@@ -192,24 +193,24 @@ public class PowerPlayTeleOp extends LinearOpMode {
     }
 
     private void processLinearSlidePositions() {
-
+        // reminder: different slide motors have different tick values
         if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-4000);
-            rightLinearSlide.setTargetPosition(-4000);
+            leftLinearSlide.setTargetPosition(-2900);
+            rightLinearSlide.setTargetPosition(-2900);
             moveSlides();
             //high
 
         }
         if (gamepad1.a && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-1700);
-            rightLinearSlide.setTargetPosition(-1700);
+            leftLinearSlide.setTargetPosition(-1192);
+            rightLinearSlide.setTargetPosition(-1192);
             moveSlides();
             //low
         }
 
         if (gamepad1.b && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-2900);
-            rightLinearSlide.setTargetPosition(-2900);
+            leftLinearSlide.setTargetPosition(-2000);
+            rightLinearSlide.setTargetPosition(-2000);
             moveSlides();
             //medium
         }
@@ -249,8 +250,8 @@ public class PowerPlayTeleOp extends LinearOpMode {
             //move the slides to the preload position (500)
             //close the scissor
             scissor.setPosition(scissorClosed);
-            leftLinearSlide.setTargetPosition(-500);
-            rightLinearSlide.setTargetPosition(-500);
+            leftLinearSlide.setTargetPosition(-238);
+            rightLinearSlide.setTargetPosition(-238);
             moveSlides();
         }
     }
