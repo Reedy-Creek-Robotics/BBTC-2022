@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.old;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import org.firstinspires.ftc.teamcode.BaseOpMode;
 
 @Autonomous(name = "RedLeftRoute1")
 public class RedLeftAutoRoute1 extends BaseOpMode {
@@ -18,9 +20,9 @@ public class RedLeftAutoRoute1 extends BaseOpMode {
         strafeRight(33, 0.5);
         moveSlides(4260);
         moveForwards(10,0.5);
-        scissor(scissorOpen);
+        //scissor(scissorOpen);
         sleep(250);
-        scissor(scissorClosed);
+        //scissor(scissorClosed);
         strafeRight(-92, 0.5);
         moveSlides(-4260);
     }
@@ -35,7 +37,7 @@ public class RedLeftAutoRoute1 extends BaseOpMode {
         //sleep(5000); //for test
         //scissor(scissorOpen); //for test
         sleep(250);
-        scissor(scissorClosed);
+        //scissor(scissorClosed);
         sleep(250);
         moveForwards(-10, 0.5);
         sleep(250);
