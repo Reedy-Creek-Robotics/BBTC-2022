@@ -17,14 +17,14 @@ public class JustParking extends BaseOpMode{
         telemetry.update();
         //preLoad();
         if (tag == 1){
-            strafeRight(-63, 0.5); //no strafe left need that in future ~Aiden
+            strafeRight(-68, 0.5); //no strafe left need that in future ~Aiden
             moveForwards(78, 0.5);
         }
         else if (tag == 2){
             moveForwards(78, 0.5);
         }
         else if (tag == 3){
-            strafeRight(63, 0.5);
+            strafeRight(68, 0.5);
             moveForwards(78, 0.5);
         }
         else {

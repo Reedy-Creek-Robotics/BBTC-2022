@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,7 +23,7 @@ import java.text.DecimalFormat;
 public class PowerPlayTeleOp extends LinearOpMode {
     static final double INCREMENT = 0.05;
     double powerFactor = 0.85;
-    IMU imu;
+    BNO055IMU imu;
     ElapsedTime timeSinceLastPress;
     DcMotor backLeft;
     DcMotor frontLeft;
@@ -81,13 +82,13 @@ public class PowerPlayTeleOp extends LinearOpMode {
 
         //YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         //double botHeading = orientation.getYaw(AngleUnit.DEGREES);
-        Orientation myRobotOrientation = imu.getRobotOrientation(
+      /*  Orientation myRobotOrientation = imu.getRobotOrientation(
                 AxesReference.INTRINSIC,
                 AxesOrder.ZYX,
                 AngleUnit.RADIANS
-        );
-
-        float botHeading = -myRobotOrientation.firstAngle;
+        );*/
+        float botHeading = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+      // double botHeading = myRobotOrientation.firstAngle;
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
         telemetry.addData("Bot Heading", botHeading);
@@ -127,12 +128,17 @@ public class PowerPlayTeleOp extends LinearOpMode {
     }
 
     private void initIMU() {
-        this.imu = hardwareMap.get(IMU.class, "imu");
+       /* this.imu = hardwareMap.get(IMU.class, "imu");
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-        /*parameters.angleUnit = IMU.AngleUnit.RADIANS;
+        imu.initialize(new IMU.Parameters(orientationOnRobot));*/
+
+        this.imu = hardwareMap.tryGet(BNO055IMU.class, "expansionImu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
         telemetry.addLine("Imu is Initializing");
         telemetry.update();
@@ -143,11 +149,11 @@ public class PowerPlayTeleOp extends LinearOpMode {
             telemetry.addLine("Calibrating");
             telemetry.update();
         }
-         */
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+
+        /*YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         double botHeading = orientation.getYaw(AngleUnit.RADIANS);
-        telemetry.clear();
-        telemetry.addLine("Calibration Status: " + Double.valueOf(botHeading).toString());
+        telemetry.clear();*/
+        telemetry.addData("Calibration Status: ", imu.getCalibrationStatus());
         telemetry.update();
     }
 
@@ -162,8 +168,8 @@ public class PowerPlayTeleOp extends LinearOpMode {
             leftLinearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightLinearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            double y = gamepad1.left_trigger * 0.8; // down
-            double x = gamepad1.right_trigger * 0.8; // up
+            double y = gamepad1.left_trigger; // down
+            double x = gamepad1.right_trigger; // up
             if (y > 0){
                 leftLinearSlide.setPower(y);
                 rightLinearSlide.setPower(y);
@@ -195,8 +201,8 @@ public class PowerPlayTeleOp extends LinearOpMode {
     private void processLinearSlidePositions() {
         // reminder: different slide motors have different tick values
         if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-2900);
-            rightLinearSlide.setTargetPosition(-2900);
+            leftLinearSlide.setTargetPosition(-2800);
+            rightLinearSlide.setTargetPosition(-2800);
             moveSlides();
             //high
 
@@ -219,13 +225,13 @@ public class PowerPlayTeleOp extends LinearOpMode {
     protected void moveSlides() {
         leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftLinearSlide.setPower(0.5);
-        rightLinearSlide.setPower(0.5);
+        leftLinearSlide.setPower(1);
+        rightLinearSlide.setPower(1);
     }
 
     private void processScissor() {
 
-        if (gamepad1.right_bumper && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+        if (gamepad1.right_bumper && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY / 2)) {
             //left_servo.setPosition(scissorOpen);
             if (scissorPosition == scissorOpen) {
                 scissorPosition = scissorClosed;
