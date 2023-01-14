@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,11 +12,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
+@Disabled
 @TeleOp(name = "FieldRelativeMecanumDrive")
 public class FieldRelativeMecanumDrive extends LinearOpMode {
     static final double INCREMENT = 0.05;
@@ -51,14 +56,22 @@ public class FieldRelativeMecanumDrive extends LinearOpMode {
     }
 
     private void processDriving() {
-        double y = Math.pow(gamepad1.left_stick_y, 3);
-        double x = Math.pow(-gamepad1.left_stick_x, 3);
+        double y = Math.pow(-gamepad1.left_stick_y, 3);
+        double x = Math.pow(gamepad1.left_stick_x, 3);
         double rx = Math.pow(gamepad1.right_stick_x, 3);
 
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        double botHeading = orientation.getYaw(AngleUnit.DEGREES);
+        //YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        //double botHeading = -orientation.getYaw(AngleUnit.RADIANS);
+        Orientation myRobotOrientation = imu.getRobotOrientation(
+                AxesReference.INTRINSIC,
+                AxesOrder.ZYX,
+                AngleUnit.RADIANS
+        );
+
+        float botHeading = -myRobotOrientation.firstAngle;
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
+        telemetry.addLine("Bot Heading = " + botHeading);
 
         if (gamepad1.dpad_up && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
             timeSinceLastPress.reset();
@@ -117,8 +130,14 @@ public class FieldRelativeMecanumDrive extends LinearOpMode {
         */
 
         // test that the IMU is initialized?
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        double botHeading = orientation.getYaw(AngleUnit.DEGREES);
+        //YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        //double botHeading = orientation.getYaw(AngleUnit.RADIANS);
+        Orientation myRobotOrientation = imu.getRobotOrientation(
+                AxesReference.INTRINSIC,
+                AxesOrder.ZYX,
+                AngleUnit.RADIANS
+        );
+        double botHeading = myRobotOrientation.firstAngle;
         telemetry.clear();
         telemetry.addLine("Calibration Status: " + Double.valueOf(botHeading).toString());
         telemetry.update();

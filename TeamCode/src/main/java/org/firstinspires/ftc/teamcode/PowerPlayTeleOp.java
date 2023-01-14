@@ -75,19 +75,19 @@ public class PowerPlayTeleOp extends LinearOpMode {
     }
 
     private void processDriving() {
-        double y = Math.pow(gamepad1.left_stick_y, 3);
-        double x = Math.pow(-gamepad1.left_stick_x, 3);
+        double y = Math.pow(-gamepad1.left_stick_y, 3);
+        double x = Math.pow(gamepad1.left_stick_x, 3);
         double rx = Math.pow(gamepad1.right_stick_x, 3);
 
         //YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         //double botHeading = orientation.getYaw(AngleUnit.DEGREES);
         Orientation myRobotOrientation = imu.getRobotOrientation(
                 AxesReference.INTRINSIC,
-                AxesOrder.XYZ,
-                AngleUnit.DEGREES
+                AxesOrder.ZYX,
+                AngleUnit.RADIANS
         );
 
-        float botHeading = myRobotOrientation.firstAngle;
+        float botHeading = -myRobotOrientation.firstAngle;
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
 
@@ -144,7 +144,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
         }
          */
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        double botHeading = orientation.getYaw(AngleUnit.DEGREES);
+        double botHeading = orientation.getYaw(AngleUnit.RADIANS);
         telemetry.clear();
         telemetry.addLine("Calibration Status: " + Double.valueOf(botHeading).toString());
         telemetry.update();
