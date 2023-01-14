@@ -25,7 +25,8 @@ import java.text.DecimalFormat;
 public class FieldRelativeMecanumDrive extends LinearOpMode {
     static final double INCREMENT = 0.05;
     double powerFactor = 0.85;
-    IMU imu;
+    //IMU imu;
+    BNO055IMU imu;
     ElapsedTime timeSinceLastPress;
     DcMotor backLeft;
     DcMotor frontLeft;
@@ -60,21 +61,19 @@ public class FieldRelativeMecanumDrive extends LinearOpMode {
         double x = Math.pow(gamepad1.left_stick_x, 3);
         double rx = Math.pow(gamepad1.right_stick_x, 3);
 
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        double botHeading = -orientation.getYaw(AngleUnit.RADIANS);
-        /*
-        Orientation myRobotOrientation = imu.getRobotOrientation(
+        //YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        //double botHeading = -orientation.getYaw(AngleUnit.RADIANS);
+        /*Orientation myRobotOrientation = imu.getRobotOrientation(
                 AxesReference.INTRINSIC,
                 AxesOrder.ZYX,
                 AngleUnit.RADIANS
         );
         float botHeading = -myRobotOrientation.firstAngle;
         */
-
+        float botHeading = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
-        telemetry.addLine("Bot Heading = " + botHeading);
-        RobotLog.d("Bot Heading = " + botHeading);
+        telemetry.addData("Bot Heading = ", botHeading);
 
         if (gamepad1.dpad_up && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
             timeSinceLastPress.reset();
@@ -111,14 +110,16 @@ public class FieldRelativeMecanumDrive extends LinearOpMode {
     }
 
     private void initIMU() {
-        this.imu = hardwareMap.get(IMU.class, "imu");
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
+        //this.imu = hardwareMap.get(IMU.class, "imu");
+        //RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        //RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+        //RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        //imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-        /*
+        this.imu = hardwareMap.tryGet(BNO055IMU.class, "expansionImu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
         telemetry.addLine("Imu is Initializing");
@@ -130,22 +131,18 @@ public class FieldRelativeMecanumDrive extends LinearOpMode {
             telemetry.addLine("Calibrating");
             telemetry.update();
         }
-        */
 
         // test that the IMU is initialized?
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        double botHeading = orientation.getYaw(AngleUnit.RADIANS);
-        /*
-        Orientation myRobotOrientation = imu.getRobotOrientation(
-                AxesReference.INTRINSIC,
-                AxesOrder.ZYX,
-                AngleUnit.RADIANS
-        );
-        double botHeading = myRobotOrientation.firstAngle;
-        */
-
-        telemetry.clear();
-        telemetry.addLine("Calibration Status: " + Double.valueOf(botHeading).toString());
+        //YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        //double botHeading = orientation.getYaw(AngleUnit.RADIANS);
+        //Orientation myRobotOrientation = imu.getRobotOrientation(
+        //        AxesReference.INTRINSIC,
+        //        AxesOrder.ZYX,
+        //        AngleUnit.RADIANS
+        //);
+        //double botHeading = myRobotOrientation.firstAngle;
+        //telemetry.clear();
+        telemetry.addData("Calibration Status: ", imu.getCalibrationStatus());
         telemetry.update();
     }
 
