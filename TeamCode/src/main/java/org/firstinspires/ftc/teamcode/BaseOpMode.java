@@ -61,6 +61,9 @@ public abstract class BaseOpMode extends LinearOpMode {
     private int backRightPos;
     private double scissorPosition;
 
+    public static double TICKS_PER_CM = 17.83; // 17.83 tics/cm traveled(Strafer)
+    public static double ROTATION_CORRECTION = 1.03; //(62/90);
+    public static double TURN_CONSTANT = 50.5d/90d; // distance per deg
 
     protected void initHardware(){
 
@@ -219,7 +222,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     protected void preLoad(){
         scissor.setPosition(scissorOpen);
         sleep(500);
-        moveSlides(500);
+        moveSlides(250);
     }
 
     protected void scissor(double scissorPosition){
@@ -227,6 +230,66 @@ public abstract class BaseOpMode extends LinearOpMode {
         sleep(200);
     }
 
+    public void turnLeft(double degrees, double speed) {
+        backLeft.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION)); //ticks
+        frontLeft.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
+        frontRight.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
+        backRight.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        backLeft.setPower(speed);
+        backRight.setPower(speed);
+        frontRight.setPower(speed);
+        frontLeft.setPower(speed);
+
+        while(opModeIsActive() && backLeft.isBusy() && backRight.isBusy() && frontLeft.isBusy() && frontRight.isBusy()) {
+            idle();
+            telemetry.addData("backLeft", backLeft.getCurrentPosition());
+            telemetry.addData("backRight",backRight.getCurrentPosition());
+            telemetry.addData("frontRight", frontRight.getCurrentPosition());
+            telemetry.addData("frontLeft", frontLeft.getCurrentPosition());
+            telemetry.update();
+        }
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        frontRight.setPower(0);
+        frontLeft.setPower(0);
+
+        sleep(100);
+    }
+    public void turnRight(double degrees, double speed) {
+        backLeft.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION)); //ticks
+        frontLeft.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
+        frontRight.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
+        backRight.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        backLeft.setPower(speed);
+        backRight.setPower(speed);
+        frontRight.setPower(speed);
+        frontLeft.setPower(speed);
+
+        while(opModeIsActive() && backLeft.isBusy() && backRight.isBusy() && frontLeft.isBusy() && frontRight.isBusy()) {
+            idle();
+            telemetry.addData("backLeft", backLeft.getCurrentPosition());
+            telemetry.addData("backRight",backRight.getCurrentPosition());
+            telemetry.addData("frontRight", frontRight.getCurrentPosition());
+            telemetry.addData("frontLeft", frontLeft.getCurrentPosition());
+            telemetry.update();
+        }
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        frontRight.setPower(0);
+        frontLeft.setPower(0);
+
+        sleep(100);
+    }
 
     protected int detectAprilTags(){
         telemetry.setMsTransmissionInterval(50);

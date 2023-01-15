@@ -172,10 +172,10 @@ public class MotorTest extends LinearOpMode {
             maxBackRightCurrent = backRightCurrent;
         }
 
-        String flString = "frontLeft: current=" + frontLeftCurrent + ", max=" + maxFrontLeftCurrent + ", min=" + minFrontLeftCurrent;
-        String frString = "frontRight: current=" + frontRightCurrent + ", max=" + maxFrontRightCurrent + ", min=" + minFrontRightCurrent;
-        String blString = "backLeft: current=" + backLeftCurrent + ", max=" + maxBackLeftCurrent + ", min=" + minBackLeftCurrent;
-        String brString = "backRight: current=" + backRightCurrent + ", max=" + maxBackRightCurrent + ", min=" + minBackRightCurrent;
+        String flString = "frontLeft: current=" + frontLeftCurrent + ", max=" + Math.round(maxFrontLeftCurrent) + ", min=" + minFrontLeftCurrent;
+        String frString = "frontRight: current=" + frontRightCurrent + ", max=" + Math.round(maxFrontRightCurrent) + ", min=" + minFrontRightCurrent;
+        String blString = "backLeft: current=" + backLeftCurrent + ", max=" + Math.round(maxBackLeftCurrent) + ", min=" + minBackLeftCurrent;
+        String brString = "backRight: current=" + backRightCurrent + ", max=" + Math.round(maxBackRightCurrent) + ", min=" + minBackRightCurrent;
 
         telemetry.addLine(flString);
         RobotLog.d(flString);

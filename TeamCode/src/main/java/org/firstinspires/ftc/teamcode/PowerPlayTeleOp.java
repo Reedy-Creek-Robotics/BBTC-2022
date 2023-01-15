@@ -71,6 +71,11 @@ public class PowerPlayTeleOp extends LinearOpMode {
             processLinearSlidePositions();
             processReadyToGrab();
             processGrab();
+
+            if(gamepad1.share && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
+                timeSinceLastPress.reset();
+                initIMU();
+            }
             telemetry.update();
         }
     }
