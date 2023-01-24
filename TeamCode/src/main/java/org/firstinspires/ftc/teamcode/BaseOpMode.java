@@ -21,7 +21,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
 
-    public static final int HIGH_POS = 2800;
+    public static final int HIGH_POS = 2850;
     public static final int MID_POS = 2000;
     public static final int LOW_POS = 1192;
 

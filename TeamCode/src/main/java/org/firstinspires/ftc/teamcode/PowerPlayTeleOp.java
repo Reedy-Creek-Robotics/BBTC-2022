@@ -206,8 +206,8 @@ public class PowerPlayTeleOp extends LinearOpMode {
     private void processLinearSlidePositions() {
         // reminder: different slide motors have different tick values
         if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(-2800);
-            rightLinearSlide.setTargetPosition(-2800);
+            leftLinearSlide.setTargetPosition(-2825);
+            rightLinearSlide.setTargetPosition(-2825);
             moveSlides();
             //high
 
