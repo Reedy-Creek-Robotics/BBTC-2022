@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -39,8 +41,11 @@ public class PowerPlayTeleOp extends LinearOpMode {
     final int manualSlideOff = 0;
     int slideToggle = manualSlideOff;
     Servo scissor;
+    int scissorPressCount;
+    Gamepad currentGamepad1 = new Gamepad();
+    Gamepad previousGamepad1 = new Gamepad();
 
-    static final int CYCLE_MS = 500; // period of each cycle
+    static final int CYCLE_MS = 100; // period of each cycle
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -65,6 +70,13 @@ public class PowerPlayTeleOp extends LinearOpMode {
         scissor.setPosition(scissorClosed);
 
         while (opModeIsActive()) {
+            try {
+                previousGamepad1.copy(currentGamepad1);
+                currentGamepad1.copy(gamepad1);
+            }
+            catch (Exception e) {
+
+            }
             processScissor();
             processDriving();
             processLinearSlide();
@@ -72,7 +84,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
             processReadyToGrab();
             processGrab();
 
-            if(gamepad1.share && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
+            if(gamepad1.share && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY * 2)){
                 timeSinceLastPress.reset();
                 initIMU();
             }
@@ -236,7 +248,9 @@ public class PowerPlayTeleOp extends LinearOpMode {
 
     private void processScissor() {
 
-        if (gamepad1.right_bumper && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY / 2)) {
+        if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper) {
+            scissorPressCount++;
+
             //left_servo.setPosition(scissorOpen);
             if (scissorPosition == scissorOpen) {
                 scissorPosition = scissorClosed;
@@ -245,8 +259,8 @@ public class PowerPlayTeleOp extends LinearOpMode {
             }
             scissor.setPosition(scissorPosition);
 
-            sleep(CYCLE_MS);
-            idle();
+            //sleep(CYCLE_MS);
+            //idle();
             telemetry.addData(">", "X is pressed");
         }
 
@@ -254,6 +268,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
         telemetry.addData("Scissor constants", "(open=%5.2f, closed=%5.2f)", scissorOpen, scissorClosed);
         telemetry.addData("Desired Scissor Position", scissorPosition);
         telemetry.addData("Actual Scissor Position", "%5.2f", scissor.getPosition());
+        telemetry.addData("Scissor button pressed times: ", scissorPressCount);
     }
 
     private void processReadyToGrab() {
