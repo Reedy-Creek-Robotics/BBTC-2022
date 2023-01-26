@@ -34,7 +34,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
     DcMotor rightLinearSlide;
     DcMotor leftLinearSlide;
     int BUTTON_DELAY = 250;
-    final double scissorClosed = 0.5;
+    final double scissorClosed = 0.6;
     final double scissorOpen = 0;
     double scissorPosition = scissorClosed;
     final int manualSlideOn = 1;
