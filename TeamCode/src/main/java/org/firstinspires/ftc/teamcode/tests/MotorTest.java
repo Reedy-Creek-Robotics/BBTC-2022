@@ -33,8 +33,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 /**
  * This OpMode scans a single servo back and forward until Stop is pressed.
@@ -50,19 +54,25 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@Disabled
-@TeleOp(name = "Motor test")
+
+@TeleOp(name = "Motor Test")
 public class MotorTest extends LinearOpMode {
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
 
     // Define class members
-    DcMotor motor;
-    double  power = 0;
+    DcMotor frontRight;
+    DcMotor frontLeft;
+    DcMotor backRight;
+    DcMotor backLeft;
+    double  power = 1;
 
     @Override
     public void runOpMode() {
 
-        motor = hardwareMap.get(DcMotor.class, "Top_Left");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         // Wait for the start button
         telemetry.addData(">", "Press Start." );
@@ -74,14 +84,32 @@ public class MotorTest extends LinearOpMode {
         // Scan servo till stop pressed.
         while(opModeIsActive()){
 
-            if (gamepad1.a && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+            if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
                 timeSinceLastPress.reset();
-                motor.setPower(power);
+                frontLeft.setPower(power);
             }
 
             if (gamepad1.b && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
                 timeSinceLastPress.reset();
-                motor.setPower(0);
+                frontRight.setPower(power);
+            }
+
+            if (gamepad1.a && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
+                timeSinceLastPress.reset();
+                backRight.setPower(power);
+            }
+
+            if (gamepad1.x && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
+                timeSinceLastPress.reset();
+                backLeft.setPower(power);
+            }
+
+            if (gamepad1.right_bumper && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
+                timeSinceLastPress.reset();
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
             }
 
             if (gamepad1.dpad_up){
@@ -93,11 +121,69 @@ public class MotorTest extends LinearOpMode {
             }
 
             telemetry.addData("Motor Power", power);
+            processCurrentStats();
             telemetry.update();
         }
 
         // Signal done;
         telemetry.addData(">", "Done");
         telemetry.update();
+    }
+
+    double minFrontRightCurrent = Double.MAX_VALUE;
+    double maxFrontRightCurrent = Double.MIN_VALUE;
+    double minFrontLeftCurrent= Double.MAX_VALUE;
+    double maxFrontLeftCurrent = Double.MIN_VALUE;
+    double minBackRightCurrent = Double.MAX_VALUE;
+    double maxBackRightCurrent = Double.MIN_VALUE;
+    double minBackLeftCurrent = Double.MAX_VALUE;
+    double maxBackLeftCurrent = Double.MIN_VALUE;
+
+    public void processCurrentStats() {
+        double frontLeftCurrent = ((DcMotorEx)frontLeft).getCurrent(CurrentUnit.AMPS);
+        if( frontLeftCurrent < minFrontLeftCurrent ) {
+            minFrontLeftCurrent = frontLeftCurrent;
+        }
+        if( frontLeftCurrent > maxFrontLeftCurrent ) {
+            maxFrontLeftCurrent = frontLeftCurrent;
+        }
+
+        double frontRightCurrent = ((DcMotorEx)frontRight).getCurrent(CurrentUnit.AMPS);
+        if( frontRightCurrent < minFrontRightCurrent ) {
+            minFrontRightCurrent = frontRightCurrent;
+        }
+        if( frontRightCurrent > maxFrontRightCurrent ) {
+            maxFrontRightCurrent = frontRightCurrent;
+        }
+
+        double backLeftCurrent = ((DcMotorEx)backLeft).getCurrent(CurrentUnit.AMPS);
+        if( backLeftCurrent < minBackLeftCurrent ) {
+            minBackLeftCurrent = backLeftCurrent;
+        }
+        if( backLeftCurrent > maxBackLeftCurrent ) {
+            maxBackLeftCurrent = backLeftCurrent;
+        }
+
+        double backRightCurrent = ((DcMotorEx)backRight).getCurrent(CurrentUnit.AMPS);
+        if( backRightCurrent < minBackRightCurrent ) {
+            minBackRightCurrent = backRightCurrent;
+        }
+        if( backRightCurrent > maxBackRightCurrent ) {
+            maxBackRightCurrent = backRightCurrent;
+        }
+
+        String flString = "frontLeft: current=" + frontLeftCurrent + ", max=" + Math.round(maxFrontLeftCurrent) + ", min=" + minFrontLeftCurrent;
+        String frString = "frontRight: current=" + frontRightCurrent + ", max=" + Math.round(maxFrontRightCurrent) + ", min=" + minFrontRightCurrent;
+        String blString = "backLeft: current=" + backLeftCurrent + ", max=" + Math.round(maxBackLeftCurrent) + ", min=" + minBackLeftCurrent;
+        String brString = "backRight: current=" + backRightCurrent + ", max=" + Math.round(maxBackRightCurrent) + ", min=" + minBackRightCurrent;
+
+        telemetry.addLine(flString);
+        RobotLog.d(flString);
+        telemetry.addLine(frString);
+        RobotLog.d(frString);
+        telemetry.addLine(blString);
+        RobotLog.d(blString);
+        telemetry.addLine(brString);
+        RobotLog.d(brString);
     }
 }

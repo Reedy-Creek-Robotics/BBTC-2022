@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.exception.RobotCoreException;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,13 +12,19 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
 @TeleOp(name = "PowerPlayTeleOp")
 public class PowerPlayTeleOp extends LinearOpMode {
     static final double INCREMENT = 0.05;
-    double powerFactor = 0.6;
+    double powerFactor = 0.85;
     BNO055IMU imu;
     ElapsedTime timeSinceLastPress;
     DcMotor backLeft;
@@ -24,15 +34,18 @@ public class PowerPlayTeleOp extends LinearOpMode {
     DcMotor rightLinearSlide;
     DcMotor leftLinearSlide;
     int BUTTON_DELAY = 250;
-    final double scissorClosed = 0.8;
+    final double scissorClosed = 0.6;
     final double scissorOpen = 0;
     double scissorPosition = scissorClosed;
     final int manualSlideOn = 1;
     final int manualSlideOff = 0;
     int slideToggle = manualSlideOff;
-    Servo left_servo;
+    Servo scissor;
+    int scissorPressCount;
+    Gamepad currentGamepad1 = new Gamepad();
+    Gamepad previousGamepad1 = new Gamepad();
 
-    static final int CYCLE_MS =  500; // period of each cycle
+    static final int CYCLE_MS = 100; // period of each cycle
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -42,23 +55,39 @@ public class PowerPlayTeleOp extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         rightLinearSlide = hardwareMap.get(DcMotor.class, "rightLinearSlide");
         leftLinearSlide = hardwareMap.get(DcMotor.class, "leftLinearSlide");
-        left_servo = hardwareMap.get(Servo.class, "scissor");
+        scissor = hardwareMap.get(Servo.class, "scissor");
         //right_hand = hardwareMap.get(Servo.class, "rightClaw");
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         initIMU();
 
         waitForStart();
         timeSinceLastPress = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        left_servo.setPosition(scissorClosed);
+        scissor.setPosition(scissorClosed);
 
         while (opModeIsActive()) {
+            try {
+                previousGamepad1.copy(currentGamepad1);
+                currentGamepad1.copy(gamepad1);
+            }
+            catch (Exception e) {
+
+            }
             processScissor();
             processDriving();
             processLinearSlide();
             processLinearSlidePositions();
+            processReadyToGrab();
+            processGrab();
+
+            if(gamepad1.share && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY * 2)){
+                timeSinceLastPress.reset();
+                initIMU();
+            }
             telemetry.update();
         }
     }
@@ -67,9 +96,19 @@ public class PowerPlayTeleOp extends LinearOpMode {
         double y = Math.pow(-gamepad1.left_stick_y, 3);
         double x = Math.pow(gamepad1.left_stick_x, 3);
         double rx = Math.pow(gamepad1.right_stick_x, 3);
-        double botHeading = -imu.getAngularOrientation().firstAngle;
+
+        //YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        //double botHeading = orientation.getYaw(AngleUnit.DEGREES);
+      /*  Orientation myRobotOrientation = imu.getRobotOrientation(
+                AxesReference.INTRINSIC,
+                AxesOrder.ZYX,
+                AngleUnit.RADIANS
+        );*/
+        float botHeading = -imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+      // double botHeading = myRobotOrientation.firstAngle;
         double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
+        telemetry.addData("Bot Heading", botHeading);
 
         if (gamepad1.dpad_up && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
             timeSinceLastPress.reset();
@@ -106,8 +145,16 @@ public class PowerPlayTeleOp extends LinearOpMode {
     }
 
     private void initIMU() {
-        this.imu = hardwareMap.get(BNO055IMU.class, "imu");
+       /* this.imu = hardwareMap.get(IMU.class, "imu");
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu.initialize(new IMU.Parameters(orientationOnRobot));*/
+
+        this.imu = hardwareMap.tryGet(BNO055IMU.class, "expansionImu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
         telemetry.addLine("Imu is Initializing");
@@ -119,8 +166,11 @@ public class PowerPlayTeleOp extends LinearOpMode {
             telemetry.addLine("Calibrating");
             telemetry.update();
         }
-        telemetry.clear();
-        telemetry.addData("Calibration Status", imu.getCalibrationStatus().toString());
+
+        /*YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        double botHeading = orientation.getYaw(AngleUnit.RADIANS);
+        telemetry.clear();*/
+        telemetry.addData("Calibration Status: ", imu.getCalibrationStatus());
         telemetry.update();
     }
 
@@ -129,27 +179,32 @@ public class PowerPlayTeleOp extends LinearOpMode {
         df.setRoundingMode(RoundingMode.FLOOR);
         return df.format(number);
     }
+    //manual control of the linear slides
+    private void processLinearSlide() {
+        if (gamepad1.left_trigger >0 || gamepad1.right_trigger >0){
+            leftLinearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightLinearSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-    private void processLinearSlide(){
-        if (gamepad1.left_bumper &&(timeSinceLastPress.milliseconds() >= BUTTON_DELAY)){
-            if (slideToggle == manualSlideOff){
-                slideToggle = manualSlideOn;
-                telemetry.addData("Manual Slide", "ON");
+            double y = gamepad1.left_trigger; // down
+            double x = gamepad1.right_trigger; // up
+            if (y > 0){
+                leftLinearSlide.setPower(y);
+                rightLinearSlide.setPower(y);
             }
-            else{
-                slideToggle = manualSlideOff;
-                telemetry.addData("Manual Slide", "OFF");
+            if (x > 0){
+                leftLinearSlide.setPower(-x);
+                rightLinearSlide.setPower(-x);
             }
-
-            timeSinceLastPress.reset();
+            if (leftLinearSlide.getCurrentPosition() >= 0 || rightLinearSlide.getCurrentPosition() >= 0){
+                leftLinearSlide.setPower(0);
+                rightLinearSlide.setPower(0);
+            }
+            if (x == 0 || y == 0){
+                leftLinearSlide.setPower(0);
+                rightLinearSlide.setPower(0);
+            }
         }
-        double y = gamepad1.left_trigger;
-        leftLinearSlide.setPower(y/2);
-        rightLinearSlide.setPower(y/2);
 
-        double x = gamepad1.right_trigger;
-        leftLinearSlide.setPower(-x/2);
-        rightLinearSlide.setPower(-x/2);
         /*
         double y = gamepad2.left_stick_y;
         leftLinearSlide.setPower(y/2);
@@ -161,53 +216,87 @@ public class PowerPlayTeleOp extends LinearOpMode {
     }
 
     private void processLinearSlidePositions() {
-
+        // reminder: different slide motors have different tick values
         if (gamepad1.y && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(1840);
-            rightLinearSlide.setTargetPosition(1803);
+            leftLinearSlide.setTargetPosition(-2825);
+            rightLinearSlide.setTargetPosition(-2825);
             moveSlides();
+            //high
 
         }
         if (gamepad1.a && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(3048);
-            rightLinearSlide.setTargetPosition(3030);
+            leftLinearSlide.setTargetPosition(-1192);
+            rightLinearSlide.setTargetPosition(-1192);
             moveSlides();
+            //low
         }
+
         if (gamepad1.b && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(2013);
-            rightLinearSlide.setTargetPosition(2008);
+            leftLinearSlide.setTargetPosition(-2000);
+            rightLinearSlide.setTargetPosition(-2000);
             moveSlides();
+            //medium
         }
     }
 
-    protected void moveSlides(){
+    protected void moveSlides() {
         leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftLinearSlide.setPower(0.15);
-        rightLinearSlide.setPower(0.15);
+        leftLinearSlide.setPower(1);
+        rightLinearSlide.setPower(1);
     }
 
-    private void processScissor(){
+    private void processScissor() {
 
-        if (gamepad1.right_bumper && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+        if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper) {
+            scissorPressCount++;
+
             //left_servo.setPosition(scissorOpen);
             if (scissorPosition == scissorOpen) {
                 scissorPosition = scissorClosed;
-            }
-            else {
+            } else {
                 scissorPosition = scissorOpen;
             }
-            left_servo.setPosition(scissorPosition);
+            scissor.setPosition(scissorPosition);
 
-            sleep(CYCLE_MS);
-            idle();
+            //sleep(CYCLE_MS);
+            //idle();
             telemetry.addData(">", "X is pressed");
         }
 
         // Display the current value
-        telemetry.addData("Scissor constants",  "(open=%5.2f, closed=%5.2f)", scissorOpen, scissorClosed);
+        telemetry.addData("Scissor constants", "(open=%5.2f, closed=%5.2f)", scissorOpen, scissorClosed);
         telemetry.addData("Desired Scissor Position", scissorPosition);
-        telemetry.addData("Actual Scissor Position", "%5.2f", left_servo.getPosition());
+        telemetry.addData("Actual Scissor Position", "%5.2f", scissor.getPosition());
+        telemetry.addData("Scissor button pressed times: ", scissorPressCount);
+    }
+
+    private void processReadyToGrab() {
+        if (gamepad1.x && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+            //move the slides to the preload position (500)
+            //close the scissor
+            scissor.setPosition(scissorClosed);
+            leftLinearSlide.setTargetPosition(-238);
+            rightLinearSlide.setTargetPosition(-238);
+            moveSlides();
+        }
+    }
+
+    // grabbing the cone from ready position
+    private void processGrab() {
+        if (gamepad1.left_bumper && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
+            leftLinearSlide.setTargetPosition(0);
+            rightLinearSlide.setTargetPosition(0);
+            moveSlides();
+            while(opModeIsActive() && leftLinearSlide.isBusy() && rightLinearSlide.isBusy()) {
+                idle();
+            }
+            scissor.setPosition(scissorOpen);
+            sleep(1000);
+            leftLinearSlide.setTargetPosition(-500);
+            rightLinearSlide.setTargetPosition(-500);
+            moveSlides();
+        }
     }
 }
 

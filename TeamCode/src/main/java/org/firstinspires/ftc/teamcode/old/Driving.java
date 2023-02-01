@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
-//@Disabled
+@Disabled
 @TeleOp
 public class Driving extends LinearOpMode {
     static final double INCREMENT   = 0.05;
