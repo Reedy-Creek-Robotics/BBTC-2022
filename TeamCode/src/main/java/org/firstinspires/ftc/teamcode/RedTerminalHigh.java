@@ -28,7 +28,7 @@ public class RedTerminalHigh extends BaseOpMode{
         sleep(SLEEP);
         // strafing and scoring
         moveSlides(HIGH_POS);
-        moveForwards(14, 0.5);
+        moveForwards(17, 0.5);
         sleep(SLEEP);
         scissor(scissorClosed);
         sleep(SLEEP);
