@@ -88,7 +88,13 @@ public class PowerPlayTeleOp extends LinearOpMode {
                 timeSinceLastPress.reset();
                 initIMU();
             }
-            telemetry.update();
+
+            if (gamepad1.options && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY * 2)){
+                timeSinceLastPress.reset();
+                leftLinearSlide.setTargetPosition(0);
+                rightLinearSlide.setTargetPosition(0);
+                moveSlides();
+            }
         }
     }
 
@@ -289,10 +295,10 @@ public class PowerPlayTeleOp extends LinearOpMode {
             rightLinearSlide.setTargetPosition(0);
             moveSlides();
             while(opModeIsActive() && leftLinearSlide.isBusy() && rightLinearSlide.isBusy()) {
-                idle();
+                sleep(10);
             }
             scissor.setPosition(scissorOpen);
-            sleep(1000);
+            sleep(250);
             leftLinearSlide.setTargetPosition(-500);
             rightLinearSlide.setTargetPosition(-500);
             moveSlides();

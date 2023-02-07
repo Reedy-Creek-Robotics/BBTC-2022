@@ -4,10 +4,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+//import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.tests.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -16,15 +15,15 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-public abstract class BaseOpMode extends LinearOpMode {
-    OpenCvCamera camera;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+public abstract class BoltiverseRobotTestBaseOpMode extends LinearOpMode {
+    //OpenCvCamera camera;
+    //AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
 
-    public static final int HIGH_POS = 2850;
-    public static final int MID_POS = 2000;
-    public static final int LOW_POS = 1192;
+    //public static final int HIGH_POS = 2850;
+    //public static final int MID_POS = 2000;
+    //public static final int LOW_POS = 1192;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -45,22 +44,21 @@ public abstract class BaseOpMode extends LinearOpMode {
     final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 1.0f;
     final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
 
-    Servo scissor;
-    DcMotor rightLinearSlide;
-    DcMotor leftLinearSlide;
+    //Servo claw;
+    //DcMotor rightLinearSlide;
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
-    final double scissorClosed = 0.5;
-    final double scissorOpen = 0;
+    //final double clawClosed = 0.5;
+    //final double clawOpen = 0;
 
-    public int distance;
+   //public int distance;
     private int frontLeftPos;
     private int frontRightPos;
     private int backLeftPos;
     private int backRightPos;
-    private double scissorPosition;
+    //private double clawPosition;
 
     public static double TICKS_PER_CM = 17.83; // 17.83 tics/cm traveled(Strafer)
     public static double ROTATION_CORRECTION = 1.03; //(62/90);
@@ -72,9 +70,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        rightLinearSlide = hardwareMap.get(DcMotor.class, "rightLinearSlide");
-        leftLinearSlide = hardwareMap.get(DcMotor.class, "leftLinearSlide");
-        scissor = hardwareMap.get(Servo.class, "scissor");
+        //rightLinearSlide = hardwareMap.get(DcMotor.class, "rightLinearSlide");
+        //claw = hardwareMap.get(Servo.class, "claw");
 
 
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -85,12 +82,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+       //rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftLinearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         backLeftPos = 0;
         backRightPos = 0;
@@ -98,28 +93,13 @@ public abstract class BaseOpMode extends LinearOpMode {
         frontRightPos = 0;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        //camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+       // aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                camera.startStreaming(640,480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
-                //camera.startStreaming(800,448, OpenCvCameraRotation.SIDEWAYS_RIGHT);
-            }
 
-            @Override
-            public void onError(int errorCode)
-            {
-
-            }
-        });
     }
 
-        // distance is in cm
+    // distance is in cm
         protected void moveForwards(double distance, double speed) {
             double target = distance * 17.855;
             backLeftPos += target;
@@ -196,46 +176,46 @@ public abstract class BaseOpMode extends LinearOpMode {
         sleep(100);
     }
 
-    protected void moveSlides(int position){
-        leftLinearSlide.setTargetPosition(-position);
-        rightLinearSlide.setTargetPosition(-position);
+    /*protected void moveSlides(int position){
+        //rightLinearSlide.setTargetPosition(-position);
 
-        leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftLinearSlide.setPower(0.5);
-        rightLinearSlide.setPower(0.5);
+        //rightLinearSlide.setPower(0.5);
 
-        while(opModeIsActive() && leftLinearSlide.isBusy() && rightLinearSlide.isBusy()) {
+        /*while(opModeIsActive() && rightLinearSlide.isBusy()) {
             idle();
-            telemetry.addData("leftLinearSlide", leftLinearSlide.getCurrentPosition());
             telemetry.addData("rightLinearSlide",rightLinearSlide.getCurrentPosition());
             telemetry.update();
         }
-        telemetry.addData("leftLinearSlide", leftLinearSlide.getCurrentPosition());
         telemetry.addData("rightLinearSlide",rightLinearSlide.getCurrentPosition());
         telemetry.update();
 
-        //leftLinearSlide.setPower(0);
         //rightLinearSlide.setPower(0);
-    }
+    }*/
 
-    protected void preLoad(){
-        scissor.setPosition(scissorOpen);
+    /*protected void preLoad(){
+        claw.setPosition(clawOpen);
         sleep(500);
         moveSlides(250);
     }
 
-    protected void scissor(double scissorPosition){
-        scissor.setPosition(scissorPosition);
+    protected void claw (double clawPosition){
+        claw.setPosition(clawPosition);
         sleep(200);
     }
-
+*/
     public void turnLeft(double degrees, double speed) {
-        backLeft.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION)); //ticks
-        frontLeft.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
-        frontRight.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
-        backRight.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
+        double target = (degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION;
+        backLeftPos -= target;
+        frontLeftPos -= target;
+        backRightPos += target;
+        frontRightPos += target;
+
+        backLeft.setTargetPosition(backLeftPos); //ticks
+        frontLeft.setTargetPosition(frontLeftPos);
+        frontRight.setTargetPosition(frontRightPos);
+        backRight.setTargetPosition(backRightPos);
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -262,10 +242,17 @@ public abstract class BaseOpMode extends LinearOpMode {
         sleep(100);
     }
     public void turnRight(double degrees, double speed) {
-        backLeft.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION)); //ticks
-        frontLeft.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
-        frontRight.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
-        backRight.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
+        double target = (degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION;
+        backLeftPos += target;
+        frontLeftPos += target;
+        backRightPos -= target;
+        frontRightPos -= target;
+
+        backLeft.setTargetPosition(backLeftPos); //ticks
+        frontLeft.setTargetPosition(frontLeftPos);
+        frontRight.setTargetPosition(frontRightPos);
+        backRight.setTargetPosition(backRightPos);
+
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -301,16 +288,16 @@ public abstract class BaseOpMode extends LinearOpMode {
             // processed since the last time we called it. Otherwise, it will return null. This
             // enables us to only run logic when there has been a new frame, as opposed to the
             // getLatestDetections() method which will always return an object.
-            ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
+            //ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
 
             // If there's been a new frame...
-            if (detections != null) {
-                telemetry.addData("FPS", camera.getFps());
-                telemetry.addData("Overhead ms", camera.getOverheadTimeMs());
-                telemetry.addData("Pipeline ms", camera.getPipelineTimeMs());
+           // if (detections != null) {
+                //telemetry.addData("FPS", camera.getFps());
+                //telemetry.addData("Overhead ms", camera.getOverheadTimeMs());
+                //telemetry.addData("Pipeline ms", camera.getPipelineTimeMs());
 
                 // If we don't see any tags
-                if (detections.size() == 0) {
+                /*if (detections.size() == 0) {
                     numFramesWithoutDetection++;
 
                     // If we haven't seen a tag for a few frames, lower the decimation
@@ -338,7 +325,10 @@ public abstract class BaseOpMode extends LinearOpMode {
                 telemetry.update();
             }
             sleep(20);
+            return result;*/
         }
-        return result;
+
+        return -1;
+
     }
 }
