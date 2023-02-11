@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "PowerPlayTeleOp")
 public class PowerPlayTeleOp extends LinearOpMode {
@@ -291,15 +292,22 @@ public class PowerPlayTeleOp extends LinearOpMode {
 
     // grabbing the cone from ready position
     private void processGrab() {
+        ElapsedTime timeout = new ElapsedTime();
         if (gamepad1.left_bumper && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
             leftLinearSlide.setTargetPosition(0);
             rightLinearSlide.setTargetPosition(0);
             moveSlides();
             while(opModeIsActive() && leftLinearSlide.isBusy() && rightLinearSlide.isBusy()) {
-                sleep(10);
-                telemetry.addData("Left Linear Slide Position", leftLinearSlide.getCurrentPosition());
-                telemetry.addData("Right Linear Slide Position", rightLinearSlide.getCurrentPosition());
-                telemetry.update();
+                if (timeout.milliseconds() >= 500) {
+                    leftLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    break;
+                } else {
+                    sleep(10);
+                    telemetry.addData("Left Linear Slide Position", leftLinearSlide.getCurrentPosition());
+                    telemetry.addData("Right Linear Slide Position", rightLinearSlide.getCurrentPosition());
+                    telemetry.update();
+                }
             }
             //leftLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             //rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
