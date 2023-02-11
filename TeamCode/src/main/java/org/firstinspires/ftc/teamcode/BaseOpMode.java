@@ -47,10 +47,10 @@ public abstract class BaseOpMode extends LinearOpMode {
     Servo scissor;
     DcMotor rightLinearSlide;
     DcMotor leftLinearSlide;
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backRight;
-    private DcMotor backLeft;
+    protected DcMotor frontLeft;
+    protected DcMotor frontRight;
+    protected DcMotor backRight;
+    protected DcMotor backLeft;
     final double scissorClosed = 0.5;
     final double scissorOpen = 0;
 
@@ -231,10 +231,18 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     public void turnLeft(double degrees, double speed) {
+        double target = (degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION;
+        backLeftPos -= target;
         backLeft.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION)); //ticks
         frontLeft.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
         frontRight.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
         backRight.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
+
+        backLeft.setTargetPosition(backLeftPos);
+        backRight.setTargetPosition(backRightPos);
+        frontLeft.setTargetPosition(frontLeftPos);
+        frontRight.setTargetPosition(frontRightPos);
+
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);

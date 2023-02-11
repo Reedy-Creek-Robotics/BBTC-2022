@@ -88,6 +88,16 @@ public class PowerPlayTeleOp extends LinearOpMode {
                 timeSinceLastPress.reset();
                 initIMU();
             }
+
+            if( gamepad1.options && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY * 2)) {
+                timeSinceLastPress.reset();
+                leftLinearSlide.setTargetPosition(0);
+                rightLinearSlide.setTargetPosition(0);
+                moveSlides();
+            }
+
+            telemetry.addData("Left Linear Slide Position", leftLinearSlide.getCurrentPosition());
+            telemetry.addData("Right Linear Slide Position", rightLinearSlide.getCurrentPosition());
             telemetry.update();
         }
     }
@@ -211,8 +221,6 @@ public class PowerPlayTeleOp extends LinearOpMode {
         rightLinearSlide.setPower(y/2);
 */
 
-        telemetry.addData("Left Linear Slide Position", leftLinearSlide.getCurrentPosition());
-        telemetry.addData("Right Linear Slide Position", rightLinearSlide.getCurrentPosition());
     }
 
     private void processLinearSlidePositions() {
@@ -242,8 +250,9 @@ public class PowerPlayTeleOp extends LinearOpMode {
     protected void moveSlides() {
         leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftLinearSlide.setPower(1);
+
         rightLinearSlide.setPower(1);
+        leftLinearSlide.setPower(1);
     }
 
     private void processScissor() {
@@ -285,14 +294,26 @@ public class PowerPlayTeleOp extends LinearOpMode {
     // grabbing the cone from ready position
     private void processGrab() {
         if (gamepad1.left_bumper && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY)) {
-            leftLinearSlide.setTargetPosition(0);
-            rightLinearSlide.setTargetPosition(0);
+            leftLinearSlide.setTargetPosition(-5);
+            rightLinearSlide.setTargetPosition(-5);
             moveSlides();
+            ElapsedTime timeout = new ElapsedTime();
             while(opModeIsActive() && leftLinearSlide.isBusy() && rightLinearSlide.isBusy()) {
-                idle();
+                if( timeout.milliseconds() <= 500 ) {
+                    idle();
+                    telemetry.addData("Left Linear Slide Position", leftLinearSlide.getCurrentPosition());
+                    telemetry.addData("Right Linear Slide Position", rightLinearSlide.getCurrentPosition());
+                    telemetry.update();
+                }
+                else {
+                    leftLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    break;
+                }
             }
+
             scissor.setPosition(scissorOpen);
-            sleep(1000);
+            sleep(250);
             leftLinearSlide.setTargetPosition(-500);
             rightLinearSlide.setTargetPosition(-500);
             moveSlides();
