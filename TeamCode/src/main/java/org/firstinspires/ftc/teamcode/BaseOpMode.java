@@ -22,9 +22,9 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     static final double FEET_PER_METER = 3.28084;
 
-    public static final int HIGH_POS = 2850;
-    public static final int MID_POS = 2000;
-    public static final int LOW_POS = 1192;
+    public static final int HIGH_POS = 2745;
+    public static final int MID_POS = 1931;
+    public static final int LOW_POS = 1128;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
@@ -52,7 +52,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
-    final double scissorClosed = 0.5;
+    final double scissorClosed = 0.6;
     final double scissorOpen = 0;
 
     public int distance;
@@ -203,8 +203,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         leftLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightLinearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftLinearSlide.setPower(0.5);
-        rightLinearSlide.setPower(0.5);
+        leftLinearSlide.setPower(1);
+        rightLinearSlide.setPower(1);
 
         while(opModeIsActive() && leftLinearSlide.isBusy() && rightLinearSlide.isBusy()) {
             idle();
@@ -223,7 +223,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     protected void preLoad(){
         scissor.setPosition(scissorOpen);
         sleep(500);
-        moveSlides(250);
+        moveSlides(200);
     }
 
     protected void scissor(double scissorPosition){
@@ -232,10 +232,16 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     public void turnLeft(double degrees, double speed) {
-        backLeft.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION)); //ticks
-        frontLeft.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
-        frontRight.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
-        backRight.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
+        double target = (degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION;
+        backLeftPos -= target;
+        frontLeftPos -= target;
+        backRightPos += target;
+        frontRightPos += target;
+
+        backLeft.setTargetPosition(backLeftPos); //ticks
+        frontLeft.setTargetPosition(frontLeftPos);
+        frontRight.setTargetPosition(frontRightPos);
+        backRight.setTargetPosition(backRightPos);
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -262,10 +268,17 @@ public abstract class BaseOpMode extends LinearOpMode {
         sleep(100);
     }
     public void turnRight(double degrees, double speed) {
-        backLeft.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION)); //ticks
-        frontLeft.setTargetPosition((int) ((degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
-        frontRight.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
-        backRight.setTargetPosition((int) (-(degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION));
+        double target = (degrees * TURN_CONSTANT) * TICKS_PER_CM * ROTATION_CORRECTION;
+        backLeftPos += target;
+        frontLeftPos += target;
+        backRightPos -= target;
+        frontRightPos -= target;
+
+        backLeft.setTargetPosition(backLeftPos); //ticks
+        frontLeft.setTargetPosition(frontLeftPos);
+        frontRight.setTargetPosition(frontRightPos);
+        backRight.setTargetPosition(backRightPos);
+
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);

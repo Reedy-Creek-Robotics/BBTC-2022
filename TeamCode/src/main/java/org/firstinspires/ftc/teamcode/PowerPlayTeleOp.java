@@ -104,8 +104,8 @@ public class PowerPlayTeleOp extends LinearOpMode {
     }
 
     private void processDriving() {
-        double y = Math.pow(-gamepad1.left_stick_y, 3);
-        double x = Math.pow(gamepad1.left_stick_x, 3);
+        double y = Math.pow(gamepad1.left_stick_y, 3);
+        double x = Math.pow(-gamepad1.left_stick_x, 3);
         double rx = Math.pow(gamepad1.right_stick_x, 3);
 
         //YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
@@ -299,6 +299,10 @@ public class PowerPlayTeleOp extends LinearOpMode {
             moveSlides();
             while(opModeIsActive() && leftLinearSlide.isBusy() && rightLinearSlide.isBusy()) {
                 if (timeout.milliseconds() >= 500) {
+                    telemetry.setAutoClear(false);
+                    telemetry.addLine("TIMEOUT!!!");
+                    telemetry.update();
+                    telemetry.setAutoClear(true);
                     leftLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     break;
@@ -313,7 +317,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
             //rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             scissorPosition = scissorOpen;
             scissor.setPosition(scissorPosition);
-            sleep(250);
+            sleep(300);
             leftLinearSlide.setTargetPosition(-500);
             rightLinearSlide.setTargetPosition(-500);
             moveSlides();
