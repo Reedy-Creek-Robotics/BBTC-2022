@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class BlueTerminalCycle extends BaseOpMode {
 
     public static final int SLEEP = 100; //our preset sleep number
-    public static final double SPEED = 0.5; //our preset speed for driving
+    public static final double SPEED1 = 0.5; //our preset speed for driving before cycling
+    public static final double SPEED2 = 0.6; //our preset speed for driving after cycling
 
     StackOffsets[] grabbingPositions = StackOffsets.values();
     public int grabCount = 0;
@@ -37,39 +38,39 @@ public class BlueTerminalCycle extends BaseOpMode {
         //preload
         preLoad(); //opening scissor and bring slides to the ready position
         //moving to medium junction
-        moveForwards(82, SPEED);
+        moveForwards(82, SPEED2);
         sleep(SLEEP);
-        moveForwards(-13, SPEED);
+        moveForwards(-13, SPEED2);
         sleep(SLEEP);
-        strafeRight(-26, SPEED); //strafing to the medium juctions
+        strafeRight(-26, SPEED2); //strafing to the medium juctions
         sleep(SLEEP);
 
         //score
         moveSlides(MID_POS); //going to the medium position
-        moveForwards(10, SPEED);
+        moveForwards(10, SPEED2);
         sleep(SLEEP);
         //moveSlides(1975);
         //sleep(SLEEP);
         scissor(scissorClosed); //dropping the cone
         sleep(SLEEP);
-        moveForwards(-10, SPEED);
+        moveForwards(-10, SPEED2);
         sleep(SLEEP);
         moveSlides(0); //go back to 0
 
         // move to stack
-        strafeRight(24, SPEED);
+        strafeRight(24, SPEED2);
         sleep(SLEEP);
-        moveForwards(71, SPEED); // pushing signal cone
+        moveForwards(71, SPEED2); // pushing signal cone
         sleep(SLEEP);
-        moveForwards(-10, SPEED); // backup after pushing signal cone
+        moveForwards(-10, SPEED2); // backup after pushing signal cone
         sleep(SLEEP);
-        turnRight(90, SPEED);
+        turnRight(90, SPEED2);
         sleep(SLEEP);
         //cycling
         for (int i = 0; i < 1; i++) {
             moveSlides(630);
             sleep(SLEEP);
-            moveForwards(80, SPEED); // Drive to stack
+            moveForwards(75, SPEED2); // Drive to stack
             sleep(SLEEP);
             moveSlides(grabbingPositions[grabCount].offset); //go inside cone
             sleep(SLEEP);
@@ -77,19 +78,19 @@ public class BlueTerminalCycle extends BaseOpMode {
             sleep(SLEEP);
             moveSlides(LOW_POS); // lift slides to score on low
             sleep(SLEEP);
-            moveForwards(-14, SPEED); // backup to line up to junction
+            moveForwards(-14, SPEED1); // backup to line up to junction
             sleep(SLEEP);
-            turnRight(90, SPEED); // turn towards junction
+            turnRight(90, SPEED1); // turn towards junction
             sleep(SLEEP);
             strafeRight(20, 0.5);
             sleep(SLEEP);
-            moveForwards(9, SPEED);
+            moveForwards(9, SPEED1);
             sleep(SLEEP);
             moveSlides(1078);
             sleep(SLEEP);
             scissor(scissorClosed); //drop cone on junction
             sleep(SLEEP);
-            moveForwards(-13, SPEED); //moving from the junction
+            moveForwards(-13, SPEED1); //moving from the junction
             sleep(SLEEP);
             //if (i < 2) {
                 //turnLeft(90, SPEED);
@@ -100,14 +101,14 @@ public class BlueTerminalCycle extends BaseOpMode {
         //moveForwards(-13, SPEED); //get ready to park
         //park
         if (tag == 1){
-            strafeRight(90, SPEED); //moving to tag one spot
-            moveForwards(10, SPEED);
+            strafeRight(90, SPEED2); //moving to tag one spot
+            moveForwards(10, SPEED2);
         }
         else if (tag == 2){
-            strafeRight(35, SPEED); //moving to tag two spot
+            strafeRight(35, SPEED2); //moving to tag two spot
         }
         else if (tag == 3){
-            strafeRight(-26, SPEED); //moving to tag three spot
+            strafeRight(-26, SPEED2); //moving to tag three spot
         }
         else {
             telemetry.addData("No Tag Detected", '0'); //let us no if there is no tag found

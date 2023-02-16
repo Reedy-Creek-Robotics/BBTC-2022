@@ -2,14 +2,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.BaseOpMode;
-
 @Autonomous (name = "RedTerminalCycle")
 public class RedTerminalCycle extends BaseOpMode {
 
     public static final int SLEEP = 100; //our preset sleep number
-    public static final double SPEED1 = 0.5; //our preset speed for driving
-    //public static final double SPEED2 = 0.75;
+    public static final double SPEED1 = 0.5; //our preset speed for driving before cycling
+    public static final double SPEED2 = 0.6; //our preset speed for driving after cycling
 
     StackOffsets[] grabbingPositions = StackOffsets.values();
     public int grabCount = 0;
@@ -39,41 +37,40 @@ public class RedTerminalCycle extends BaseOpMode {
 
         //preload
         preLoad(); //opening scissor and bring slides to the ready position
-        sleep(10000);
         //moving to medium junction
-        moveForwards(82, SPEED1);
+        moveForwards(82, SPEED2);
         sleep(SLEEP);
-        moveForwards(-13, SPEED1);
+        moveForwards(-13, SPEED2);
         sleep(SLEEP);
-        strafeRight(35, SPEED1); //strafing to the medium juctions
+        strafeRight(35, SPEED2); //strafing to the medium juctions
         sleep(SLEEP);
 
         //score
         moveSlides(MID_POS); //going to the medium position
-        moveForwards(10, SPEED1);
+        moveForwards(10, SPEED2);
         sleep(SLEEP);
         //moveSlides(1975);
         //sleep(SLEEP);
         scissor(scissorClosed); //dropping the cone
         sleep(SLEEP);
-        moveForwards(-10, SPEED1);
+        moveForwards(-10, SPEED2);
         sleep(SLEEP);
         moveSlides(0); //go back to 0
 
         // move to stack
-        strafeRight(-24, SPEED1);
+        strafeRight(-24, SPEED2);
         sleep(SLEEP);
-        moveForwards(71, SPEED1); // pushing signal cone
+        moveForwards(71, SPEED2); // pushing signal cone
         sleep(SLEEP);
-        moveForwards(-10, SPEED1); // backup after pushing signal cone
+        moveForwards(-13, SPEED2); // backup after pushing signal cone
         sleep(SLEEP);
-        turnLeft(91.5, SPEED1);
+        turnLeft(90, SPEED2);
         sleep(SLEEP);
         //cycling
         for (int i = 0; i < 1; i++) {
             moveSlides(630);
             sleep(SLEEP);
-            moveForwards(70, SPEED1); // Drive to stack
+            moveForwards(70, SPEED2); // Drive to stack
             sleep(SLEEP);
             moveSlides(grabbingPositions[grabCount].offset); //go inside the cone that we are at     (Used for cycling)
             sleep(SLEEP);
@@ -83,11 +80,11 @@ public class RedTerminalCycle extends BaseOpMode {
             sleep(SLEEP);
             moveForwards(-14, SPEED1); // backup to line up to junction
             sleep(SLEEP);
-            turnLeft(90, SPEED1); // turn towards junction
+            turnLeft(91.5, SPEED1); // turn towards junction
             sleep(SLEEP);
-            strafeRight(-20, 0.5);
+            strafeRight(-22, SPEED1);
             sleep(SLEEP);
-            moveForwards(9, SPEED1);
+            moveForwards(11, SPEED1);
             sleep(SLEEP);
             moveSlides(1078);
             sleep(SLEEP);
@@ -104,13 +101,13 @@ public class RedTerminalCycle extends BaseOpMode {
         //moveForwards(-13, SPEED); //get ready to park
         //park
         if (tag == 1){
-            strafeRight(26, SPEED1); //moving to tag one spot
+            strafeRight(26, SPEED2); //moving to tag one spot
         }
         else if (tag == 2){
-            strafeRight(-35, SPEED1); //moving to tag two spot
+            strafeRight(-35, SPEED2); //moving to tag two spot
         }
         else if (tag == 3){
-            strafeRight(-90, SPEED1); //moving to tag three spot
+            strafeRight(-90, SPEED2); //moving to tag three spot
         }
         else {
             telemetry.addData("No Tag Detected", '0'); //let us no if there is no tag found
