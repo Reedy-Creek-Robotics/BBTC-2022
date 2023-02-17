@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous (name = "RedTerminalCycle")
-public class RedTerminalCycle extends BaseOpMode {
-
-    public static final int SLEEP = 100; //our preset sleep number
+@Autonomous (name = "RedTerminalTWOCycle")
+public class RedTerminal2Cycle extends BaseOpMode {
+    public static final int SLEEP = 50; //our preset sleep number
     public static final double SPEED1 = 0.5; //our preset speed for driving before cycling
     public static final double SPEED2 = 0.6; //our preset speed for driving after cycling
 
@@ -38,7 +37,7 @@ public class RedTerminalCycle extends BaseOpMode {
         //preload
         preLoad(); //opening scissor and bring slides to the ready position
         //moving to medium junction
-        moveForwards(82, SPEED2);
+        moveForwards(82, 0.65);
         sleep(SLEEP);
         moveForwards(-13, SPEED2);
         sleep(SLEEP);
@@ -58,19 +57,23 @@ public class RedTerminalCycle extends BaseOpMode {
         moveSlides(0); //go back to 0
 
         // move to stack
-        strafeRight(-24, SPEED2);
+        strafeRight(-24, SPEED1);
         sleep(SLEEP);
-        moveForwards(71, SPEED2); // pushing signal cone
+        moveForwards(71, 0.65); // pushing signal cone
         sleep(SLEEP);
-        moveForwards(-13, SPEED2); // backup after pushing signal cone
+        moveForwards(-14, SPEED2); // backup after pushing signal cone
         sleep(SLEEP);
-        turnLeft(90, SPEED2);
+        turnLeft(91.5, SPEED2);
         sleep(SLEEP);
         //cycling
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 2; i++) {
             moveSlides(630);
-            sleep(SLEEP);
-            moveForwards(70, SPEED2); // Drive to stack
+            if (i < 1 ){
+                sleep(SLEEP);
+                moveForwards(71, SPEED2); // Drive to stack
+            }else{
+                moveForwards(28, SPEED2);
+            }
             sleep(SLEEP);
             moveSlides(grabbingPositions[grabCount].offset); //go inside the cone that we are at     (Used for cycling)
             sleep(SLEEP);
@@ -78,36 +81,37 @@ public class RedTerminalCycle extends BaseOpMode {
             sleep(SLEEP);
             moveSlides(LOW_POS); // lift slides to score on low
             sleep(SLEEP);
-            moveForwards(-14, SPEED1); // backup to line up to junction
+            moveForwards(-15, SPEED1); // backup to line up to junction
             sleep(SLEEP);
             turnLeft(91.5, SPEED1); // turn towards junction
             sleep(SLEEP);
-            strafeRight(-22, SPEED1);
+            strafeRight(-20, SPEED1);
             sleep(SLEEP);
-            moveForwards(9, SPEED1);
+            moveForwards(11, SPEED1);
             sleep(SLEEP);
             moveSlides(1078);
             sleep(SLEEP);
             scissor(scissorClosed); //drop cone on junction
             sleep(SLEEP);
-            moveForwards(-13, SPEED1); //moving from the junction
+            moveForwards(-12, SPEED1); //moving from the junction
             sleep(SLEEP);
-            //if (i < 1) {
-                //turnRight(90, SPEED1);
-                //sleep(SLEEP);
-            //}
+            if (i < 1) {
+                strafeRight(20, SPEED1);
+                turnRight(91.5, SPEED1);
+                sleep(SLEEP);
+            }
             grabCount++;
         }
         //moveForwards(-13, SPEED); //get ready to park
         //park
         if (tag == 1){
-            strafeRight(26, SPEED2); //moving to tag one spot
+            strafeRight(26, 1); //moving to tag one spot
         }
         else if (tag == 2){
-            strafeRight(-35, SPEED2); //moving to tag two spot
+            strafeRight(-35, 1); //moving to tag two spot
         }
         else if (tag == 3){
-            strafeRight(-90, SPEED2); //moving to tag three spot
+            strafeRight(-95, 1); //moving to tag three spot
         }
         else {
             telemetry.addData("No Tag Detected", '0'); //let us no if there is no tag found

@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
+@Disabled
 @Autonomous (name = "RedTerminalHigh")
 
 public class RedTerminalHigh extends BaseOpMode{
 
     public static final int SLEEP = 500;
     @Override
+
     public void runOpMode() throws InterruptedException {
         initHardware();
         //have the camera read the signal cone

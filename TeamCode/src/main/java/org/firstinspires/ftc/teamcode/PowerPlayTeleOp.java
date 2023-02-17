@@ -84,6 +84,7 @@ public class PowerPlayTeleOp extends LinearOpMode {
             processLinearSlidePositions();
             processReadyToGrab();
             processGrab();
+            processResetLinearSlides();
 
             if(gamepad1.share && (timeSinceLastPress.milliseconds() >= BUTTON_DELAY * 2)){
                 timeSinceLastPress.reset();
@@ -221,6 +222,12 @@ public class PowerPlayTeleOp extends LinearOpMode {
         leftLinearSlide.setPower(y/2);
         rightLinearSlide.setPower(y/2);
 */
+    }
+    private void processResetLinearSlides(){
+        if(currentGamepad1.dpad_left && !previousGamepad1.dpad_left){
+            rightLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftLinearSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
     }
 
     private void processLinearSlidePositions() {
